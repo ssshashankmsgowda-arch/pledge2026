@@ -9,15 +9,14 @@ interface PosterProps {
 }
 
 const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
-  // === EXACT SPECIFICATION ===
+  // === TRANSFORM-FREE IMPLEMENTATION ===
+  // All positions are ABSOLUTE PIXELS - no transform, no translate
   // Canvas: 1080px x 1440px
-  // All coordinates are FIXED PIXELS
 
   // Dynamic font size calculation for vertical name
-  // Target: ~170px for average names, Min: 60px, Max: 250px
   const calculateNameFontSize = (name: string): number => {
     const charCount = name.length || 1;
-    const containerHeight = 1300; // usable height for text
+    const containerHeight = 1300;
     let fontSize = Math.floor(containerHeight / (charCount * 0.77));
     return Math.max(60, Math.min(250, fontSize));
   };
@@ -29,19 +28,14 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
       ref={innerRef}
       id={id || "pledge-poster"}
       style={{
-        // FIXED SIZE - exactly 1080x1440
         width: '1080px',
         height: '1440px',
-        minWidth: '1080px',
-        minHeight: '1440px',
-        maxWidth: '1080px',
-        maxHeight: '1440px',
         position: 'relative',
         overflow: 'hidden',
         backgroundColor: '#ffffff'
       }}
     >
-      {/* BACKGROUND IMAGE - Full Cover */}
+      {/* BACKGROUND IMAGE */}
       <img
         src="/poster_2026_updated.png"
         alt="Background"
@@ -58,11 +52,10 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
       />
 
       {/* ============================================= */}
-      {/* 1. USER NAME - Vertical Text (Left Sidebar)  */}
+      {/* 1. USER NAME - Vertical Text (NO ROTATION)   */}
       {/* ============================================= */}
-      {/* Container: 250px x 1440px, Position: top:0, left:0 */}
-      {/* Rotation: -90 degrees (counter-clockwise) */}
-      {/* Alignment: Centered within sidebar */}
+      {/* Using writing-mode instead of transform for html2canvas compatibility */}
+      {/* Container: 250px x 1440px at position (0, 0) */}
       <div
         style={{
           position: 'absolute',
@@ -70,55 +63,43 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
           left: '0px',
           width: '250px',
           height: '1440px',
-          zIndex: 10,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          overflow: 'visible'
+          zIndex: 10
         }}
       >
-        {/* Inner container for rotation - 1440px wide (becomes height after rotation) */}
-        <div
+        <span
           style={{
-            width: '1440px',
-            height: '250px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transform: 'rotate(-90deg)',
-            transformOrigin: 'center center'
+            writingMode: 'vertical-rl',
+            textOrientation: 'mixed',
+            transform: 'rotate(180deg)', // This rotation is just for text direction, not positioning
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 900,
+            fontSize: `${nameFontSize}px`,
+            color: '#e63946',
+            textTransform: 'uppercase',
+            lineHeight: 1,
+            whiteSpace: 'nowrap',
+            textAlign: 'center',
+            letterSpacing: '0.02em'
           }}
         >
-          <span
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 900,
-              fontSize: `${nameFontSize}px`,
-              color: '#e63946',
-              textTransform: 'uppercase',
-              lineHeight: 1,
-              whiteSpace: 'nowrap',
-              textAlign: 'center'
-            }}
-          >
-            {userData.fullName || 'YOUR NAME'}
-          </span>
-        </div>
+          {userData.fullName || 'YOUR NAME'}
+        </span>
       </div>
 
       {/* ============================================= */}
-      {/* 2. USER PHOTO - Circular                     */}
+      {/* 2. USER PHOTO - Circular (ABSOLUTE POSITION) */}
       {/* ============================================= */}
       {/* Size: 590px x 590px */}
-      {/* Position: top: 330px, left: 50% + 30px offset */}
-      {/* CSS: top: 330px; left: 50%; transform: translateX(-50%); margin-left: 30px; */}
+      {/* Center X = 540 + 30 = 570px */}
+      {/* Left edge = 570 - 295 = 275px (NO TRANSFORM) */}
       <div
         style={{
           position: 'absolute',
           top: '330px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          marginLeft: '30px',
+          left: '275px', // Calculated: 570 - (590/2) = 275
           width: '590px',
           height: '590px',
           borderRadius: '50%',
@@ -156,11 +137,10 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
       </div>
 
       {/* ============================================= */}
-      {/* 3. PLEDGE TEXT - Red Box                     */}
+      {/* 3. PLEDGE TEXT - Red Box (ABSOLUTE POSITION) */}
       {/* ============================================= */}
       {/* Size: 660px x min 200px */}
       {/* Position: top: 980px, left: 320px */}
-      {/* Background: #EF3E36, border-radius: 24px, padding: 40px */}
       <div
         style={{
           position: 'absolute',
