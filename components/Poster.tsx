@@ -59,7 +59,7 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
         style={{
           position: 'absolute',
           top: '0px',
-          left: '0px',
+          left: '2px',
           width: '250px',
           height: '1440px',
           zIndex: 10,
