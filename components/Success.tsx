@@ -9,8 +9,7 @@ interface SuccessProps {
 
 const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   const [downloading, setDownloading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+
 
   const currentUrl = window.location.origin;
   const pledgeText = userData.customPledge || ''; // Fallback
@@ -30,7 +29,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
 
         // Generate JPEG as per HTML logic to avoid huge PNGs if not needed, or just match HTML
         const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-        setGeneratedImage(dataUrl);
+
 
         // Trigger Download
         const link = document.createElement('a');
@@ -39,8 +38,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         link.href = dataUrl;
         link.click();
 
-        // Show Modal
-        setShowModal(true);
+
 
       } catch (err) {
         console.error("Download Error:", err);
@@ -146,28 +144,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       </div>
 
       {/* Download Modal - Matches HTML Logic */}
-      {showModal && (
-        <div className="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-4 animate-fade-in">
-          <div className="relative w-full max-w-md bg-white rounded-2xl overflow-hidden shadow-2xl">
-            <div className="p-4 border-b flex justify-between items-center bg-stone-50">
-              <h3 className="font-black text-stone-900 uppercase tracking-widest text-sm">Your Poster is Ready!</h3>
-              <button onClick={() => setShowModal(false)} className="text-2xl text-stone-400 hover:text-stone-900">&times;</button>
-            </div>
-            <div className="p-4 bg-stone-100 flex justify-center">
-              {generatedImage && (
-                <img src={generatedImage} alt="Generated Poster" className="max-h-[50vh] object-contain shadow-lg border-4 border-white" />
-              )}
-            </div>
-            <div className="p-5 flex flex-col gap-3">
-              <p className="text-xs text-center text-emerald-600 font-bold uppercase tracking-wider">✓ Downloaded to your device</p>
-              <button onClick={() => setShowModal(false)}
-                className="w-full bg-stone-900 text-white font-bold py-3 rounded-xl uppercase tracking-widest text-xs hover:bg-stone-800 transition-colors">
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
 
     </div>
   );
