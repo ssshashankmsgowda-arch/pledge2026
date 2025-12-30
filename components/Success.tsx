@@ -46,14 +46,20 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         // 3. Wait for browser to repaint
         await new Promise(resolve => setTimeout(resolve, 150));
 
-        // 4. Capture the full-size poster
+        // 4. Capture the full-size poster at FIXED 1080x1440
         const canvas = await (window as any).html2canvas(posterElement, {
-          scale: 2, // High resolution
+          scale: 2, // High resolution (2160x2880 output)
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
           width: 1080,
-          height: 1440
+          height: 1440,
+          windowWidth: 1080,
+          windowHeight: 1440,
+          scrollX: 0,
+          scrollY: 0,
+          x: 0,
+          y: 0
         });
 
         // 5. Restore the original transform
