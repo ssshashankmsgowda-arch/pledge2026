@@ -28,17 +28,22 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
           backgroundColor: '#ffffff'
         });
 
-        // Generate PNG as requested
-        const dataUrl = canvas.toDataURL('image/png');
+        // Generate JPEG as requested
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        const blob = dataURItoBlob(dataUrl);
+        const blobUrl = URL.createObjectURL(blob);
 
         // Trigger Download
         const link = document.createElement('a');
         const name = userData.fullName?.replace(/\s+/g, '_') || 'Manifestation';
-        link.download = `pledge_2026_${name}.png`;
-        link.href = dataUrl;
+        link.download = `pledge_2026_${name}.jpg`;
+        link.href = blobUrl;
+        document.body.appendChild(link); // Append to body to ensure click works in all browsers
         link.click();
+        document.body.removeChild(link);
 
-
+        // Cleanup
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 
       } catch (err) {
         console.error("Download Error:", err);
