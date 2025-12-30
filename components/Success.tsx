@@ -24,17 +24,17 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         const canvas = await (window as any).html2canvas(element, {
           scale: 2, // High resolution matching HTML logic
           useCORS: true,
+          allowTaint: true, // Allow tainted canvas if needed, though useCORS is preferred
           backgroundColor: '#ffffff'
         });
 
-        // Generate JPEG as per HTML logic to avoid huge PNGs if not needed, or just match HTML
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-
+        // Generate PNG as requested
+        const dataUrl = canvas.toDataURL('image/png');
 
         // Trigger Download
         const link = document.createElement('a');
         const name = userData.fullName?.replace(/\s+/g, '_') || 'Manifestation';
-        link.download = `pledge_2026_${name}.jpg`;
+        link.download = `pledge_2026_${name}.png`;
         link.href = dataUrl;
         link.click();
 
