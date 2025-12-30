@@ -21,6 +21,10 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
 
     if (element) {
       try {
+        // Scroll to top to ensure accurate capture coordinates
+        window.scrollTo(0, 0);
+        await new Promise(resolve => setTimeout(resolve, 100)); // Short delay for repaint
+
         const canvas = await (window as any).html2canvas(element, {
           scale: 2, // High resolution matching HTML logic
           useCORS: true,
