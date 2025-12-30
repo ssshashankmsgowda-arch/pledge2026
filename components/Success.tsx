@@ -50,20 +50,64 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
     setDownloading(false);
   };
 
-  const handleShare = (platform: 'whatsapp' | 'linkedin' | 'instagram') => {
+  // Helper to convert dataURI to Blob
+  const dataURItoBlob = (dataURI: string) => {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+  };
+
+  const handleShare = async (platform: 'whatsapp' | 'linkedin' | 'instagram') => {
     const shareText = `I just pledged my watch! Join me here:\n${currentUrl}`;
-    let url = '';
 
     if (platform === 'whatsapp') {
-      url = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+      // 1. Try Native Sharing (Mobile)
+      if (navigator.share && navigator.canShare) {
+        setDownloading(true);
+        const element = document.getElementById('pledge-poster-capture');
+        if (element) {
+          try {
+            const canvas = await (window as any).html2canvas(element, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' });
+            const dataUrl = canvas.toDataURL('image/png');
+            const blob = dataURItoBlob(dataUrl);
+            const file = new File([blob], `pledge_2026.png`, { type: 'image/png' });
+
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                files: [file],
+                title: 'My 2025 Pledge',
+                text: shareText,
+              });
+              setDownloading(false);
+              return; // Success, stop here
+            }
+          } catch (e) {
+            console.log("Native sharing failed, falling back to link", e);
+          }
+        }
+        setDownloading(false);
+      }
+
+      // 2. Fallback: Download + Open WhatsApp Web
+      // Auto-download first
+      await handleDownload();
+      alert("Poster downloaded! Please attach it to your message.");
+
+      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+      window.open(url, '_blank');
+
     } else if (platform === 'linkedin') {
-      url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
+      const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
+      window.open(url, '_blank');
     } else if (platform === 'instagram') {
       alert("To share on Instagram: Download the poster first, then share it to your Story!");
       return;
     }
-
-    if (url) window.open(url, '_blank');
   };
 
   const copyToClipboard = () => {
