@@ -10,7 +10,7 @@ interface SuccessProps {
 const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   const [downloading, setDownloading] = useState(false);
   const posterRef = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const scaleWrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.3);
 
@@ -49,14 +49,14 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   // Generate poster image and return as File
   const generatePosterImage = async (): Promise<File | null> => {
     const posterElement = posterRef.current;
-    const wrapperElement = wrapperRef.current;
+    const scaleWrapper = scaleWrapperRef.current;
 
-    if (!posterElement || !wrapperElement) return null;
+    if (!posterElement || !scaleWrapper) return null;
 
     try {
-      const originalTransform = wrapperElement.style.transform;
-      wrapperElement.style.transform = 'none';
-      wrapperElement.style.transformOrigin = 'top left';
+      // Store original transform and temporarily remove it
+      const originalTransform = scaleWrapper.style.transform;
+      scaleWrapper.style.transform = 'none';
 
       await new Promise(resolve => setTimeout(resolve, 150));
 
@@ -75,7 +75,8 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         y: 0
       });
 
-      wrapperElement.style.transform = originalTransform;
+      // Restore the original transform
+      scaleWrapper.style.transform = originalTransform;
 
       const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
       const blob = dataURItoBlob(dataUrl);
@@ -83,7 +84,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       return new File([blob], fileName, { type: 'image/jpeg' });
     } catch (err) {
       console.error("Image generation error:", err);
-      if (wrapperElement) wrapperElement.style.transform = '';
+      if (scaleWrapper) scaleWrapper.style.transform = `scale(${scale})`;
       return null;
     }
   };
@@ -167,15 +168,15 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         className="flex-1 flex items-start justify-center px-2 sm:px-4"
       >
         <div
-          ref={wrapperRef}
           className="relative shadow-2xl rounded-lg overflow-hidden bg-white"
           style={{
             width: 1080 * scale,
-            height: scaledHeight,
-            transform: `scale(1)` // This gets modified during capture
+            height: scaledHeight
           }}
         >
+          {/* This div has the scale transform that we manipulate during capture */}
           <div
+            ref={scaleWrapperRef}
             style={{
               transform: `scale(${scale})`,
               transformOrigin: 'top left',
