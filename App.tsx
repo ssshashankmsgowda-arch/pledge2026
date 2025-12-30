@@ -94,12 +94,25 @@ const App: React.FC = () => {
             setUserData={setUserData}
             onBack={exitFlow}
             onContinue={() => {
+              setCurrentStep(Step.Preview);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        );
+      case Step.Preview:
+        return (
+          <CertificatePreview
+            pledge={customPledgeObject}
+            userData={userData}
+            setUserData={setUserData}
+            onBack={() => setCurrentStep(Step.Form)}
+            onConfirm={() => {
               setCurrentStep(Step.Success);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
         );
-      case Step.Success: // Merged Preview and Success logic
+      case Step.Success:
         return <Success onReset={exitFlow} userData={userData} />;
       default:
         return null;
