@@ -17,6 +17,7 @@ export interface UserData {
   email: string;
   phone: string;
   photo?: string;
+  customPledge?: string;
 }
 
 export enum Step {

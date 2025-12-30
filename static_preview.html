@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f5f5f4;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center min-h-screen p-10 bg-gray-100">
+
+    <div class="fixed top-0 left-0 w-full bg-white p-4 shadow z-50 flex justify-between items-center">
+        <h2 class="text-xl font-bold text-stone-900">Preview Mockup</h2>
+        <span class="text-sm text-stone-500">Generated Static Preview</span>
+    </div>
+
+    <!-- Wrapper for scaling -->
+    <div
+        class="mt-20 transform scale-[0.3] md:scale-[0.4] lg:scale-[0.5] origin-top border-4 border-gray-300 shadow-2xl">
+        <!-- Poster Content copying Poster.tsx -->
+        <div class="w-[1080px] h-[1440px] relative overflow-hidden bg-white">
+            <!-- Background -->
+            <div class="absolute inset-0 z-0">
+                <!-- Use relative path to public folder -->
+                <img src="./public/poster_2026.png" alt="Certificate Background" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-stone-100 -z-10 flex items-center justify-center text-stone-400">
+                    <span class="text-2xl font-bold uppercase tracking-widest">Poster Custom Image Failed to Load</span>
+                </div>
+            </div>
+
+            <!-- Overlays -->
+            <div class="relative z-10 w-full h-full">
+
+                <!-- Left Sidebar Name Overlay (Replacing 'SHASHANK') -->
+                <div
+                    class="absolute top-0 left-0 w-[250px] h-full bg-white z-20 flex flex-col items-center justify-center p-4">
+                    <!-- Standard Horizontal Text as requested -->
+                    <h2 class="text-[40px] font-black text-[#e63946] uppercase text-center break-words leading-tight"
+                        style="font-family: 'Inter', sans-serif; word-break: break-word;">
+                        YOUR NAME
+                    </h2>
+                </div>
+
+                <!-- Photo Overlay -->
+                <!-- Center of red area. Red starts approx x=250. Width=830. Center ~ 665. 
+                     Y center ~720. Diameter ~500. -->
+                <div
+                    class="absolute top-[480px] left-[420px] w-[500px] h-[500px] rounded-full overflow-hidden z-10 border-4 border-white">
+                    <div class="w-full h-full flex items-center justify-center bg-gray-200/50">
+                        <!-- Use an image if available or placeholder -->
+                        <img src="https://via.placeholder.com/500" class="w-full h-full object-cover opacity-50" />
+                    </div>
+                </div>
+
+                <!-- Pledge Text -->
+                <!-- Bottom right area with masking background -->
+                <div
+                    className="absolute top-[1050px] left-[320px] w-[680px] min-h-[200px] z-20 flex items-center justify-center p-8 bg-[#EF3E36] rounded-2xl shadow-sm">
+                    <p className="text-[36px] leading-tight font-bold text-white uppercase text-center drop-shadow-md"
+                        style="font-family: 'Inter', sans-serif;">
+                        "My New Year Resolution is to verify the custom poster alignment."
+                    </p>
+                </div>
+
+                <!-- Footer info -->
+                <div
+                    class="absolute bottom-6 right-10 text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 text-stone-900">
+                    #2025MANIFESTED
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div
+        class="fixed bottom-0 left-0 w-full bg-white p-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50 flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div class="flex flex-col w-full max-w-xs">
+            <label class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-1">Name</label>
+            <input type="text" id="nameInput" value="YOUR NAME"
+                class="border border-stone-300 rounded px-3 py-2 text-stone-900 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                oninput="updatePreview()">
+        </div>
+        <div class="flex flex-col w-full max-w-lg">
+            <label class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-1">Resolution / Pledge</label>
+            <input type="text" id="pledgeInput" value="My New Year Resolution is to verify the custom poster alignment."
+                class="border border-stone-300 rounded px-3 py-2 text-stone-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                oninput="updatePreview()">
+        </div>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const name = document.getElementById('nameInput').value || 'YOUR NAME';
+            const pledge = document.getElementById('pledgeInput').value || 'Enter your resolution...';
+
+            // Name Element
+            const nameEl = document.querySelector('h2[style*="Inter"]');
+            if (nameEl) nameEl.innerText = name;
+
+            // Pledge Element
+            const pledgeEl = document.querySelector('p[style*="Oswald"]');
+            if (pledgeEl) pledgeEl.innerText = `"${pledge}"`;
+        }
+    </script>
+</body>
+
+</html>

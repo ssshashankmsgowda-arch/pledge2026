@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Mockup - Poster Testing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-stone-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white border-b border-stone-200 py-4 px-6 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-stone-800">Preview Mockup</h1>
+        <a href="pledge_app.html" class="text-emerald-600 font-medium hover:underline">Open Full App →</a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex flex-col items-center py-8">
+        <!-- Poster Preview -->
+        <div
+            class="transform scale-[0.4] sm:scale-[0.5] md:scale-[0.55] origin-top shadow-2xl border-[10px] border-white rounded-lg bg-white">
+            <div id="posterContainer" class="w-[1080px] h-[1440px] relative overflow-hidden bg-white">
+                <!-- Background Poster Image -->
+                <img src="./public/poster_2026.png" class="absolute inset-0 w-full h-full object-cover z-0">
+
+                <!-- Sidebar Name (Vertical) -->
+                <div class="absolute top-0 left-0 w-[250px] h-full bg-white z-20 flex items-end justify-start p-0">
+                    <!-- Rotated Name - starts from bottom, reads upward -->
+                    <h2 id="posterName"
+                        class="text-[150px] font-black text-[#e63946] uppercase tracking-tighter leading-none whitespace-nowrap"
+                        style="font-family: 'Inter', sans-serif; transform: rotate(-90deg); transform-origin: left bottom; margin-left: 180px; margin-bottom: 50px;">
+                        YOUR NAME</h2>
+                </div>
+
+                <!-- Photo Circle -->
+                <div id="photoWrapper"
+                    class="absolute rounded-full overflow-hidden z-10 border-4 border-white shadow-lg"
+                    style="top: 330px; left: 50%; transform: translateX(-50%); margin-left: 30px; width: 590px; height: 590px;">
+                    <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                        <img id="posterPhoto" src="https://via.placeholder.com/500?text=PHOTO"
+                            class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <!-- Pledge Box -->
+                <div
+                    class="absolute top-[1050px] left-[320px] w-[680px] min-h-[200px] z-20 flex items-center justify-center p-8 bg-[#EF3E36] rounded-2xl shadow-sm">
+                    <p id="posterPledge"
+                        class="text-[36px] leading-tight font-bold text-white uppercase text-center drop-shadow-md"
+                        style="font-family: 'Inter', sans-serif;">
+                        "My Resolution..."
+                    </p>
+                </div>
+
+                <!-- Footer -->
+                <div class="absolute bottom-6 right-10 text-[12px] font-bold uppercase tracking-[0.2em] text-white/60">
+                    #2026RESOLUTION</div>
+            </div>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="w-full max-w-4xl px-6 mt-[-200px] md:mt-[-100px] relative z-50">
+            <div class="bg-white rounded-2xl shadow-xl border border-stone-200 p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Name Input -->
+                    <div>
+                        <label
+                            class="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-2">Name</label>
+                        <input type="text" id="inputName" placeholder="Enter Name" value=""
+                            class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                            oninput="updatePoster()">
+                    </div>
+                    <!-- Pledge Input -->
+                    <div>
+                        <label class="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-2">Resolution
+                            / Pledge</label>
+                        <input type="text" id="inputPledge" placeholder="My New Year Resolution is to..."
+                            value="My New Year Resolution is to travel."
+                            class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                            oninput="updatePoster()">
+                    </div>
+                </div>
+
+                <!-- Photo Upload -->
+                <div class="flex flex-wrap gap-4 items-center border-t border-stone-100 pt-4">
+                    <label class="text-xs font-bold text-stone-400 uppercase tracking-widest">Photo:</label>
+                    <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)"
+                        class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                    <button onclick="clearPhoto()"
+                        class="text-xs font-bold text-stone-400 uppercase tracking-widest border border-stone-200 px-4 py-2 rounded-full hover:bg-stone-50 transition-colors">Clear
+                        Photo</button>
+                </div>
+
+                <!-- Adjustment Controls -->
+                <div class="border-t border-stone-100 pt-4 space-y-4">
+                    <p class="text-xs font-bold text-stone-400 uppercase tracking-widest">Photo Position Adjustments</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-stone-400 uppercase block mb-1">Top (px)</label>
+                            <input type="number" id="photoTop" value="330" min="0" max="1000" step="5"
+                                class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm"
+                                oninput="updatePhotoPosition()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-stone-400 uppercase block mb-1">Left (px)</label>
+                            <input type="number" id="photoLeft" value="370" min="0" max="1000" step="5"
+                                class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm"
+                                oninput="updatePhotoPosition()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-stone-400 uppercase block mb-1">Size (px)</label>
+                            <input type="number" id="photoSize" value="590" min="100" max="800" step="5"
+                                class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm"
+                                oninput="updatePhotoPosition()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-stone-400 uppercase block mb-1">Name Font
+                                Size</label>
+                            <input type="number" id="nameSize" value="150" min="20" max="200" step="5"
+                                class="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-lg text-sm"
+                                oninput="updateNameStyle()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Values Button -->
+                <div class="flex justify-end gap-4">
+                    <button onclick="exportValues()"
+                        class="bg-stone-900 text-white px-6 py-2 rounded-xl font-bold hover:bg-emerald-600 transition-all text-sm">
+                        Copy CSS Values
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updatePoster() {
+            const name = document.getElementById('inputName').value || 'YOUR NAME';
+            const pledge = document.getElementById('inputPledge').value || 'My Resolution...';
+            document.getElementById('posterName').innerText = name.toUpperCase();
+            document.getElementById('posterPledge').innerText = `"${pledge}"`;
+        }
+
+        function handlePhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('posterPhoto').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearPhoto() {
+            document.getElementById('posterPhoto').src = 'https://via.placeholder.com/500?text=PHOTO';
+            document.getElementById('photoInput').value = '';
+        }
+
+        function updatePhotoPosition() {
+            const top = document.getElementById('photoTop').value;
+            const left = document.getElementById('photoLeft').value;
+            const size = document.getElementById('photoSize').value;
+
+            const photoWrapper = document.getElementById('photoWrapper');
+            photoWrapper.style.top = top + 'px';
+            photoWrapper.style.left = left + 'px';
+            photoWrapper.style.width = size + 'px';
+            photoWrapper.style.height = size + 'px';
+        }
+
+        function updateNameStyle() {
+            const fontSize = document.getElementById('nameSize').value;
+            document.getElementById('posterName').style.fontSize = fontSize + 'px';
+        }
+
+        function exportValues() {
+            const top = document.getElementById('photoTop').value;
+            const left = document.getElementById('photoLeft').value;
+            const size = document.getElementById('photoSize').value;
+            const nameSize = document.getElementById('nameSize').value;
+
+            const css = `/* Photo */
+top: ${top}px;
+left: ${left}px;
+width: ${size}px;
+height: ${size}px;
+
+/* Name */
+font-size: ${nameSize}px;`;
+
+            navigator.clipboard.writeText(css).then(() => {
+                alert('CSS values copied to clipboard!');
+            }).catch(() => {
+                alert(css);
+            });
+        }
+
+        // Initialize
+        updatePoster();
+    </script>
+</body>
+
+</html>

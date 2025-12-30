@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pledge 2025 - Manifest Your Future</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .hidden-section {
+            display: none !important;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes progress {
+            0% {
+                transform: scaleX(0);
+            }
+
+            100% {
+                transform: scaleX(1);
+            }
+        }
+
+        .animate-progress {
+            animation: progress 5s linear infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-[#fcfcfb] selection:bg-emerald-100 selection:text-emerald-900">
+
+    <!-- Header -->
+    <header
+        class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-white/80 backdrop-blur-lg border-b border-stone-100 py-3">
+        <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <button onclick="resetFlow()" class="flex items-center space-x-2 group">
+                <div
+                    class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold transition-transform group-hover:rotate-12">
+                    P</div>
+                <span class="font-bold text-xl tracking-tighter text-stone-800 outfit">Pledge2025</span>
+            </button>
+
+            <nav
+                class="hidden md:flex items-center space-x-8 text-sm font-bold text-stone-500 uppercase tracking-widest">
+                <!-- Navigation links removed -->
+            </nav>
+
+            <button onclick="startFlow()" id="headerCta"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all transform active:scale-95 shadow-lg shadow-emerald-100">
+                Start Manifesting
+            </button>
+        </div>
+    </header>
+
+    <!-- SECTION 1: HERO / LANDING -->
+    <div id="heroSection" class="animate-fade-in pt-16">
+        <section
+            class="relative h-[80vh] flex flex-col items-center justify-center text-center overflow-hidden bg-[#fcfcfb]">
+            <!-- Background -->
+            <div class="absolute inset-0 z-0">
+                <div class="absolute inset-0 opacity-100">
+                    <img src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80&w=2000"
+                        alt="Sunrise" class="w-full h-full object-cover opacity-25">
+                    <div class="absolute inset-0 bg-gradient-to-b from-[#fcfcfb]/40 via-transparent to-[#fcfcfb]"></div>
+                </div>
+            </div>
+
+            <div class="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center">
+                <div
+                    class="mb-8 inline-flex items-center space-x-3 px-4 py-1.5 bg-white/80 border border-emerald-100 rounded-full shadow-sm backdrop-blur-sm">
+                    <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                    <span class="text-[10px] font-black text-emerald-800 uppercase tracking-[0.4em] outfit">Pathway
+                        2025</span>
+                </div>
+
+                <div class="relative w-full h-[220px] sm:h-[280px]">
+                    <div
+                        class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-700 opacity-100 translate-y-0">
+                        <h1
+                            class="text-4xl sm:text-6xl md:text-8xl font-black text-stone-900 tracking-tighter leading-[0.95] outfit">
+                            Dream It.<br />
+                            <span class="text-emerald-600 italic">Claim It.</span>
+                        </h1>
+                        <p class="text-sm sm:text-lg text-stone-600 max-w-lg mx-auto mt-6 leading-relaxed font-light">
+                            The most powerful year of your life starts with a single, clear intention.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-12">
+                    <button onclick="startFlow()"
+                        class="group relative inline-flex items-center justify-center bg-stone-900 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-300 hover:bg-emerald-600 hover:scale-105 active:scale-95 shadow-xl shadow-stone-200 outfit text-lg">
+                        Choose Your Path
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section id="impact" class="py-32 bg-[#fcfcfb] relative overflow-hidden border-y border-stone-100">
+            <div class="text-center mb-10">
+                <h2 class="text-4xl font-black text-stone-900">Why It Works</h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto px-6 text-center">
+                <div>
+                    <p class="text-5xl font-black text-stone-800">42k+</p>
+                    <p class="text-xs font-bold text-stone-400">Pledges</p>
+                </div>
+                <div>
+                    <p class="text-5xl font-black text-stone-800">120k</p>
+                    <p class="text-xs font-bold text-stone-400">Dreams</p>
+                </div>
+                <div>
+                    <p class="text-5xl font-black text-stone-800">500k</p>
+                    <p class="text-xs font-bold text-stone-400">Days</p>
+                </div>
+                <div>
+                    <p class="text-5xl font-black text-stone-800">25k</p>
+                    <p class="text-xs font-bold text-stone-400">Habits</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- SECTION 2: FORM -->
+    <div id="formSection" class="hidden-section pt-24 pb-20 px-6 min-h-screen">
+        <div class="max-w-2xl mx-auto space-y-8 animate-fade-in">
+            <div class="text-center">
+                <h2 class="text-3xl font-black text-stone-900 outfit mb-2">My New Year Resolution</h2>
+                <p class="text-stone-500">Fill in your details to generate your 2026 Poster.</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2rem] shadow-xl border border-stone-100 space-y-6">
+                <!-- Photo Upload -->
+                <!-- Photo Selection (Normal) -->
+                <div id="photoSelection" class="flex flex-col items-center gap-4">
+                    <div
+                        class="w-32 h-32 rounded-full overflow-hidden bg-stone-100 border-2 border-dashed border-stone-300 flex items-center justify-center relative group">
+                        <img id="previewImage" src="https://via.placeholder.com/150?text=No+Image"
+                            class="w-full h-full object-cover opacity-50">
+                        <input type="file" id="fileInput" class="hidden" accept="image/*"
+                            onchange="handleFileSelect(event)">
+                        <button onclick="document.getElementById('fileInput').click()"
+                            class="absolute inset-0 bg-black/50 text-white font-bold opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                            Upload
+                        </button>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="document.getElementById('fileInput').click()"
+                            class="text-[10px] font-black text-emerald-600 uppercase tracking-widest border border-emerald-100 px-4 py-1.5 rounded-full hover:bg-emerald-50 transition-colors">Upload
+                            Photo</button>
+                        <button onclick="startCamera()"
+                            class="text-[10px] font-black text-stone-500 uppercase tracking-widest border border-stone-100 px-4 py-1.5 rounded-full hover:bg-stone-50 transition-colors">Open
+                            Camera</button>
+                    </div>
+                </div>
+
+                <!-- Camera UI (Hidden) -->
+                <div id="cameraUI" class="hidden flex flex-col items-center gap-4 w-full">
+                    <div
+                        class="relative w-64 h-64 rounded-full overflow-hidden border-4 border-emerald-500 bg-black shadow-xl">
+                        <video id="cameraVideo" autoplay playsinline
+                            class="w-full h-full object-cover transform -scale-x-100"></video>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="capturePhoto()"
+                            class="bg-emerald-600 text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-700">Capture</button>
+                        <button onclick="stopCamera()"
+                            class="bg-stone-200 text-stone-700 px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-stone-300">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Inputs -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-1">Full
+                            Name</label>
+                        <input type="text" id="formName" maxlength="13" placeholder="e.g. John Doe"
+                            oninput="validateInputs(); updateNameCharCount()"
+                            class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <p id="nameCharCount" class="text-xs text-stone-400 mt-1 text-right">0 / 13</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-1">Email</label>
+                            <input type="email" id="formEmail" placeholder="alex@example.com" oninput="validateInputs()"
+                                class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label
+                                class="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-1">WhatsApp
+                                Number</label>
+                            <input type="tel" id="formPhone" placeholder="+91 98765 43210" oninput="validateInputs()"
+                                class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-1">My New Year
+                            Resolution</label>
+                        <p class="text-xs text-stone-400 mb-2">Maximum 120 characters</p>
+                        <textarea id="formPledge" placeholder="I will..." maxlength="120"
+                            oninput="validateInputs(); updateCharCount()"
+                            class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none min-h-[100px]"></textarea>
+                        <p id="charCount" class="text-xs text-stone-400 mt-1 text-right">0 / 120</p>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-between items-center">
+                    <button onclick="resetFlow()" class="text-xs font-bold text-stone-400 hover:text-stone-800">←
+                        CANCEL</button>
+                    <button id="submitBtn" onclick="submitForm()" disabled
+                        class="bg-stone-200 text-stone-400 px-8 py-3 rounded-xl font-bold transition-all shadow-none cursor-not-allowed">Visualize
+                        2025 →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: PREVIEW -->
+    <div id="previewSection" class="hidden-section pt-24 pb-20 px-6 min-h-screen flex flex-col items-center">
+        <div class="text-center mb-8 animate-fade-in">
+            <h2 class="text-3xl font-black text-stone-900 outfit">Your 2025 Pledge</h2>
+            <p class="text-emerald-600 font-medium">Ready to download.</p>
+        </div>
+
+        <!-- Poster Box -->
+        <!-- Scaling wrapper to fit screen -->
+        <div
+            class="transform scale-[0.35] sm:scale-[0.5] md:scale-[0.6] origin-top shadow-2xl border-[10px] border-white rounded-lg">
+            <div id="posterContainer" class="w-[1080px] h-[1440px] relative overflow-hidden bg-white">
+                <!-- Background -->
+                <img src="./public/poster_2026.png" class="absolute inset-0 w-full h-full object-cover z-0">
+
+                <!-- Content -->
+                <!-- Sidebar Name -->
+                <div id="nameContainer"
+                    class="absolute top-0 left-0 w-[250px] h-full bg-white z-20 flex items-center justify-center">
+                    <!-- Rotated Name - dynamically sized -->
+                    <h2 id="posterName"
+                        class="font-black text-[#e63946] uppercase tracking-wide leading-none whitespace-nowrap"
+                        style="font-family: 'Inter', sans-serif; transform: rotate(-90deg); font-size: 170px;">YOUR NAME
+                    </h2>
+                </div>
+
+                <!-- Photo -->
+                <div class="absolute rounded-full overflow-hidden z-10 border-4 border-white shadow-lg"
+                    style="top: 330px; left: 50%; transform: translateX(-50%); margin-left: 30px; width: 590px; height: 590px;">
+                    <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                        <img id="posterPhoto" src="https://via.placeholder.com/500?text=PHOTO"
+                            class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <!-- Pledge -->
+                <div
+                    class="absolute top-[1050px] left-[320px] w-[680px] min-h-[200px] z-20 flex items-center justify-center p-8 bg-[#EF3E36] rounded-2xl shadow-sm">
+                    <p id="posterPledge"
+                        class="text-[36px] leading-tight font-bold text-white uppercase text-center drop-shadow-md"
+                        style="font-family: 'Inter', sans-serif;">
+                        "My Resolution..."
+                    </p>
+                </div>
+
+                <!-- Footer -->
+                <div class="absolute bottom-6 right-10 text-[12px] font-bold uppercase tracking-[0.2em] text-white/60">
+                    #2026RESOLUTION</div>
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 left-0 w-full bg-white p-4 flex justify-center gap-4 border-t border-stone-100 z-50">
+            <button onclick="showForm()"
+                class="px-6 py-3 rounded-xl border border-stone-200 font-bold text-stone-500 hover:bg-stone-50">Edit
+                Details</button>
+            <button onclick="downloadPoster()"
+                class="px-6 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-lg">Download
+                Poster</button>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let userData = {
+            name: '',
+            email: '',
+            phone: '',
+            pledge: '',
+            photo: null
+        };
+        let stream = null;
+
+        function startFlow() {
+            document.getElementById('heroSection').classList.add('hidden-section');
+            document.getElementById('previewSection').classList.add('hidden-section');
+            document.getElementById('formSection').classList.remove('hidden-section');
+            document.getElementById('headerCta').classList.add('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function resetFlow() {
+            document.getElementById('heroSection').classList.remove('hidden-section');
+            document.getElementById('formSection').classList.add('hidden-section');
+            document.getElementById('previewSection').classList.add('hidden-section');
+            document.getElementById('headerCta').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function showForm() {
+            startFlow(); // Same logic
+        }
+
+        // Character counter for resolution field
+        function updateCharCount() {
+            const pledge = document.getElementById('formPledge').value;
+            const charCount = document.getElementById('charCount');
+            charCount.innerText = `${pledge.length} / 120`;
+
+            // Change color when approaching limit
+            if (pledge.length >= 110) {
+                charCount.classList.remove('text-stone-400');
+                charCount.classList.add('text-orange-500');
+            } else {
+                charCount.classList.remove('text-orange-500');
+                charCount.classList.add('text-stone-400');
+            }
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    userData.photo = e.target.result;
+                    document.getElementById('previewImage').src = e.target.result;
+                    document.getElementById('previewImage').classList.remove('opacity-50');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function startCamera() {
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+                    const video = document.getElementById('cameraVideo');
+                    video.srcObject = stream;
+                    document.getElementById('photoSelection').classList.add('hidden');
+                    document.getElementById('cameraUI').classList.remove('hidden');
+                } else {
+                    alert('Camera API not supported in this environment (needs HTTPS or localhost).');
+                }
+            } catch (err) {
+                console.error("Camera Error:", err);
+                alert("Could not access camera. Please check browser permissions and ensure you are using HTTPS or localhost.");
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            if (video.srcObject) {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                // Mirror logic
+                const ctx = canvas.getContext('2d');
+                ctx.translate(canvas.width, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, 0, 0);
+
+                const dataUrl = canvas.toDataURL('image/png');
+                userData.photo = dataUrl;
+
+                document.getElementById('previewImage').src = dataUrl;
+                document.getElementById('previewImage').classList.remove('opacity-50');
+                stopCamera();
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            document.getElementById('cameraUI').classList.add('hidden');
+            document.getElementById('photoSelection').classList.remove('hidden');
+        }
+
+        function validateInputs() {
+            const name = document.getElementById('formName').value.trim();
+            const email = document.getElementById('formEmail').value.trim();
+            const phone = document.getElementById('formPhone').value.trim();
+            const pledge = document.getElementById('formPledge').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Regex Patterns
+            // Email: Standard structure
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            // Phone: At least 10 digits
+            const cleanPhone = phone.replace(/[^0-9]/g, '');
+            const isPhoneValid = cleanPhone.length >= 10;
+
+            const isFormValid = (
+                name.length >= 3 &&
+                emailRegex.test(email) &&
+                isPhoneValid &&
+                pledge.length >= 5
+            );
+
+            if (isFormValid) {
+                submitBtn.disabled = false;
+                submitBtn.className = "bg-stone-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-emerald-600 transition-all shadow-lg transform active:scale-95 cursor-pointer";
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.className = "bg-stone-200 text-stone-400 px-8 py-3 rounded-xl font-bold transition-all shadow-none cursor-not-allowed";
+            }
+        }
+
+        // Dynamic font size calculation for name
+        function calculateNameFontSize(name) {
+            const containerHeight = 1300; // Available vertical space in pixels
+            const charCount = name.length || 1; // Prevent divide by zero
+
+            // Target: 13 chars -> ~130px. 
+            // Formula: size = containerHeight / (charCnt * k)
+            // 130 = 1300 / (13 * k) => k ~= 0.77
+
+            let fontSize = Math.floor(containerHeight / (charCount * 0.77));
+
+            // Clamp between min and max
+            // previously max was 220, let's keep it reasonable or slightly larger for very short names
+            const minSize = 60;
+            const maxSize = 250;
+            fontSize = Math.max(minSize, Math.min(maxSize, fontSize));
+
+            return fontSize;
+        }
+
+        // Character counter for name field
+        function updateNameCharCount() {
+            const name = document.getElementById('formName').value;
+            const charCount = document.getElementById('nameCharCount');
+            charCount.innerText = `${name.length} / 13`;
+
+            if (name.length >= 12) {
+                charCount.classList.remove('text-stone-400');
+                charCount.classList.add('text-orange-500');
+            } else {
+                charCount.classList.remove('text-orange-500');
+                charCount.classList.add('text-stone-400');
+            }
+        }
+
+        function submitForm() {
+            // Get form values
+            const name = document.getElementById('formName').value.trim();
+            const email = document.getElementById('formEmail').value.trim();
+            const phone = document.getElementById('formPhone').value.trim();
+            const pledge = document.getElementById('formPledge').value.trim();
+
+            userData.name = name;
+            userData.email = email;
+            userData.phone = phone;
+            userData.pledge = pledge;
+
+            // Update Preview DOM with dynamic font size
+            const posterNameEl = document.getElementById('posterName');
+            const dynamicFontSize = calculateNameFontSize(name);
+            posterNameEl.style.fontSize = dynamicFontSize + 'px';
+            posterNameEl.innerText = name;
+
+            document.getElementById('posterPledge').innerText = `"${pledge}"`;
+            if (userData.photo) {
+                document.getElementById('posterPhoto').src = userData.photo;
+            }
+
+            // Switch Views
+            document.getElementById('formSection').classList.add('hidden-section');
+            document.getElementById('previewSection').classList.remove('hidden-section');
+            window.scrollTo(0, 0);
+        }
+
+        function downloadPoster() {
+            const poster = document.getElementById('posterContainer');
+            // Use simple print approach or redirect to image if html2canvas fails or is not preferred 
+            // But user asked for download. HTML2Canvas is best for this "generated element" style.
+
+            html2canvas(poster, { scale: 2, useCORS: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `pledge_2025_${userData.name.replace(/\s+/g, '_')}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }).catch(err => {
+                console.error(err);
+                alert("Could not generate image. Please try screenshotting manually.");
+            });
+        }
+    </script>
+</body>
+
+</html>

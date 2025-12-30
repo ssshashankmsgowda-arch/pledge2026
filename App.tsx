@@ -4,23 +4,16 @@ import { Step, Pledge, UserData } from './types';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import ImpactSection from './components/ImpactSection';
-import PledgeSelection from './components/PledgeSelection';
 import UserForm from './components/UserForm';
 import CertificatePreview from './components/CertificatePreview';
 import Success from './components/Success';
 import Poster from './components/Poster';
 import SiteFooter from './components/Footer';
-import CategoryHero from './components/CategoryHero';
-import FeaturedPledges from './components/FeaturedPledges';
 import MissionSection from './components/MissionSection';
-import { CATEGORIES } from './constants';
 
 const App: React.FC = () => {
   const [inFlow, setInFlow] = useState(false);
-  const [currentStep, setCurrentStep] = useState<Step>(Step.Selection);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedPledge, setSelectedPledge] = useState<Pledge | null>(null);
-  const [certTheme, setCertTheme] = useState<'minimal' | 'artistic' | 'bold'>('minimal');
+  const [currentStep, setCurrentStep] = useState<Step>(Step.Form);
   const [images, setImages] = useState<Record<string, string>>({});
   const [userData, setUserData] = useState<UserData>({
     fullName: '',
@@ -34,11 +27,11 @@ const App: React.FC = () => {
       try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
         const prompts = [
-          { id: 'main', text: 'Minimalist crystal emerald geometric sprout, macro photography, 8k, ethereal light.' },
-          { id: 'environment', text: 'Sustainable green futuristic city architecture, minimalist, soft emerald haze, 8k.' },
-          { id: 'health', text: 'Zen balance stones on water, soft green ambient lighting, minimalist, 8k.' },
-          { id: 'lifestyle', text: 'Cozy minimalist reading nook, soft morning sunlight, emerald accents, 8k.' },
-          { id: 'unity', text: 'Abstract unity concept, minimalist silhouettes, soft emerald backlighting, luxury aesthetic, 8k.' }
+          { id: 'main', text: 'Minimalist golden sunrise over mountains, soft warm light, hopeful atmosphere, 8k, inspirational.' },
+          { id: 'environment', text: 'Abstract visual representation of determination, glowing golden lines climbing upward, dark background, 8k.' },
+          { id: 'health', text: 'Peaceful zen garden with soft morning mist, balance stones, golden light transparency, 8k.' },
+          { id: 'lifestyle', text: 'Open notebook with a fountain pen on a wooden desk, warm sunlight, coffee cup, inviting creative space, 8k.' },
+          { id: 'unity', text: 'Glowing constellations connecting in the night sky, golden threads of destiny, hopeful and vast, 8k.' }
         ];
         const generatedImages: Record<string, string> = {};
         await Promise.all(prompts.map(async (p) => {
@@ -64,110 +57,85 @@ const App: React.FC = () => {
   const heroSlides = useMemo(() => [
     {
       image: images.main || null,
-      title1: "Small Steps.",
-      title2: "Giant Impact.",
-      subtitle: "The most powerful change starts with a single, public commitment for 2025."
+      title1: "Dream It.",
+      title2: "Claim It.",
+      subtitle: "The most powerful year of your life starts with a single, clear intention."
     },
     {
       image: images.environment || null,
-      title1: "Protect Earth.",
-      title2: "Heal Future.",
-      subtitle: "Adopt sustainable habits that preserve our planet for generations to come."
+      title1: "Manifest.",
+      title2: "Achieve.",
+      subtitle: "Turn your deepest desires into reality by speaking them into existence."
     },
     {
       image: images.health || null,
-      title1: "Healthy Mind.",
-      title2: "Vibrant Life.",
-      subtitle: "Commit to wellness and find the balance your body and soul deserve."
+      title1: "Inner Peace.",
+      title2: "Mental Clarity.",
+      subtitle: "Affirm your worth and find the balance your mind and soul deserve."
     },
     {
       image: images.lifestyle || null,
-      title1: "Focus More.",
-      title2: "Live Better.",
-      subtitle: "Break free from digital noise and reclaim your presence in the real world."
+      title1: "Write Your",
+      title2: "Future.",
+      subtitle: "Your words shape your world. Define your 2025 story today."
     },
     {
       image: images.unity || null,
-      title1: "Better Together.",
-      title2: "Join Forces.",
-      subtitle: "Be part of a global movement transforming habits into a lasting legacy."
+      title1: "Believe in",
+      title2: "Yourself.",
+      subtitle: "Join thousands of others committing to a year of growth and positivity."
     }
   ], [images]);
 
-  const startFlow = (catId?: string, pledge?: Pledge) => {
+  const startFlow = () => {
     setInFlow(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (pledge) {
-      setSelectedPledge(pledge);
-      setCurrentStep(Step.Form);
-    } else if (catId) {
-      setSelectedCategory(catId);
-      setCurrentStep(Step.Selection);
-    } else {
-      setSelectedCategory(null);
-      setCurrentStep(Step.Selection);
-    }
+    setCurrentStep(Step.Form);
   };
 
   const exitFlow = () => {
     setInFlow(false);
-    setSelectedCategory(null);
-    setSelectedPledge(null);
-    setCurrentStep(Step.Selection);
+    setCurrentStep(Step.Form);
   };
 
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  
+
   const prevStep = () => {
-    if (currentStep === Step.Selection && !selectedCategory) {
+    if (currentStep === Step.Form) {
       exitFlow();
     } else {
       setCurrentStep((prev) => prev - 1);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  
-  const handlePledgeSelect = (pledge: Pledge) => {
-    setSelectedPledge(pledge);
-    nextStep();
-  };
+
+
+  const customPledgeObject: Pledge = useMemo(() => ({
+    id: 999,
+    text: userData.customPledge || '',
+    explanation: 'My 2025 Commitment'
+  }), [userData.customPledge]);
 
   const renderPledgeStep = () => {
     switch (currentStep) {
-      case Step.Selection:
-        return (
-          <PledgeSelection
-            selectedCategory={selectedCategory}
-            onCategorySelect={setSelectedCategory}
-            onPledgeSelect={handlePledgeSelect}
-            onResetCategory={() => {
-                if (!selectedCategory) exitFlow();
-                else setSelectedCategory(null);
-            }}
-            backgroundImages={images}
-          />
-        );
       case Step.Form:
         return (
           <UserForm
             userData={userData}
             setUserData={setUserData}
-            selectedPledge={selectedPledge}
-            onBack={prevStep}
+            onBack={exitFlow}
             onContinue={nextStep}
           />
         );
       case Step.Preview:
         return (
           <CertificatePreview
-            pledge={selectedPledge!}
+            pledge={customPledgeObject}
             userData={userData}
             setUserData={setUserData}
-            theme={certTheme}
-            setTheme={setCertTheme}
             onBack={prevStep}
             onConfirm={nextStep}
           />
@@ -182,56 +150,39 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#fcfcfb] selection:bg-emerald-100 selection:text-emerald-900">
       <Header onCtaClick={() => startFlow()} isPledging={inFlow} onExit={exitFlow} />
-      
+
       {!inFlow ? (
         <div className="animate-fade-in">
           <Hero onStart={() => startFlow()} slides={heroSlides} />
-          
+
           <div className="py-12 bg-white border-b border-stone-50">
-            <FeaturedPledges onSelect={(p) => startFlow(undefined, p)} />
+            {/* Removed FeaturedPledges */}
           </div>
 
           <ImpactSection />
-          
+
           <MissionSection />
 
           <div className="space-y-4 pb-20 bg-stone-50/30">
-            <CategoryHero 
-              category={CATEGORIES.find(c => c.id === 'environment')!} 
-              image={images.environment} 
-              onAction={() => startFlow('environment')}
-              reversed={false}
-            />
-            <CategoryHero 
-              category={CATEGORIES.find(c => c.id === 'health')!} 
-              image={images.health} 
-              onAction={() => startFlow('health')}
-              reversed={true}
-            />
-            <CategoryHero 
-              category={CATEGORIES.find(c => c.id === 'lifestyle')!} 
-              image={images.lifestyle} 
-              onAction={() => startFlow('lifestyle')}
-              reversed={false}
-            />
+            {/* Removed CategoryHeroes */}
           </div>
           <SiteFooter />
         </div>
       ) : (
         <div className="pt-24 min-h-screen bg-[#fcfcfb] flex items-start justify-center">
           <div className="w-full animate-fade-in relative">
-             <div className="min-h-[80vh] flex flex-col">
-                {renderPledgeStep()}
-             </div>
+            <div className="min-h-[80vh] flex flex-col">
+              {renderPledgeStep()}
+            </div>
           </div>
         </div>
       )}
 
       {/* Hidden container for rendering the poster to canvas */}
       <div className="fixed top-[-5000px] left-[-5000px]" aria-hidden="true">
-        {selectedPledge && (
+        {userData.customPledge && (
           <div id="capture-container">
-            <Poster pledge={selectedPledge} userData={userData} theme={certTheme} id="pledge-poster-capture" />
+            <Poster pledge={customPledgeObject} userData={userData} id="pledge-poster-capture" />
           </div>
         )}
       </div>

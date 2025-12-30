@@ -3,10 +3,10 @@ import React from 'react';
 
 const ImpactSection: React.FC = () => {
   const stats = [
-    { label: 'Pledges Made', value: '42,850', sub: 'Global Community' },
-    { label: 'CO2 Potential', value: '120k', sub: 'Kg / Year Reduction' },
-    { label: 'Health Hours', value: '500k', sub: 'Committed to Wellness' },
-    { label: 'Plastic Saved', value: '25k', sub: 'Single-use Items' },
+    { label: 'Resolutions Set', value: '42,850', sub: 'Goals Defined' },
+    { label: 'Dreams Manifested', value: '120k', sub: 'Success Stories' },
+    { label: 'Positive Days', value: '500k', sub: 'Mindful Living' },
+    { label: 'Habits Changed', value: '25k', sub: 'Transformations' },
   ];
 
   return (
@@ -21,10 +21,10 @@ const ImpactSection: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-24 space-y-4">
-          <span className="text-emerald-600 font-black text-[10px] uppercase tracking-[0.5em] outfit">Global Traction</span>
-          <h2 className="text-5xl sm:text-7xl font-black text-stone-900 outfit tracking-tighter leading-none">Collective Progress</h2>
+          <span className="text-emerald-600 font-black text-[10px] uppercase tracking-[0.5em] outfit">Why It Works</span>
+          <h2 className="text-5xl sm:text-7xl font-black text-stone-900 outfit tracking-tighter leading-none">Power of Intention</h2>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-20 lg:gap-8">
           {stats.map((stat, idx) => (
             <div key={idx} className="flex flex-col items-center text-center space-y-6 group">

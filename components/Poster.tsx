@@ -15,10 +15,10 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
       id={id || "pledge-poster"}
       className="w-[1080px] h-[1440px] relative overflow-hidden bg-white"
     >
-      {/* Custom Background Image */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/custom_poster.png"
+          src="/poster_2026.png"
           alt="Certificate Background"
           className="w-full h-full object-cover"
           onError={(e) => {
@@ -26,43 +26,43 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
           }}
         />
         <div className="absolute inset-0 bg-stone-100 -z-10 flex items-center justify-center text-stone-400">
-          <span className="text-2xl font-bold uppercase tracking-widest">Poster Background 1080x1440</span>
+          {/* Fallback if image fails */}
+          <span className="text-2xl font-bold uppercase tracking-widest">Poster 2026</span>
         </div>
       </div>
 
       {/* Content Overlay */}
       <div className="relative z-10 w-full h-full">
 
-        {/* Photo Overlay - Situated in the watch face circle (Top Left) */}
-        {/* Adjusted based on the new 1080x1440 template visual */}
-        <div className="absolute top-[80px] left-[70px] w-[500px] h-[500px] rounded-full overflow-hidden rotate-[-12deg] z-10">
-          {userData.photo ? (
-            <img src={userData.photo} alt="User" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200/50">
-              <span className="text-gray-400 font-bold">PHOTO</span>
-            </div>
-          )}
-        </div>
-
-        {/* Name Overlay - "DEAR [NAME]" */}
-        {/* Positioned to cover the "SHASHANK GOWDA" text on the template */}
-        <div className="absolute top-[1020px] left-[180px] z-20 bg-[#fcfcfb] px-4 py-2 -ml-4 rounded-lg">
-          <h2 className="text-[40px] font-black uppercase text-[#3e2b26] tracking-wide leading-none" style={{ fontFamily: 'Inter, sans-serif' }}>
+        {/* Left Sidebar - Name Overlay (Replacing 'SHASHANK') */}
+        <div className="absolute top-0 left-0 w-[250px] h-full bg-white z-20 flex items-center justify-center p-4 shadow-xl">
+          <h2 className="text-[40px] font-black text-[#D9381E] uppercase text-center break-words leading-tight" style={{ fontFamily: 'Inter, sans-serif' }}>
             {userData.fullName || 'YOUR NAME'}
           </h2>
         </div>
 
-        {/* Pledge Text - Placed below the name */}
-        <div className="absolute top-[1100px] left-[100px] w-[880px] z-20 bg-[#fcfcfb]/90 p-6 rounded-xl shadow-sm">
-          <p className="text-[28px] leading-relaxed font-medium text-[#3e2b26] text-center italic" style={{ fontFamily: 'Outfit, sans-serif' }}>
+        {/* Photo Overlay - Centered in the circle area */}
+        <div className="absolute top-[480px] left-[420px] w-[500px] h-[500px] rounded-full overflow-hidden z-10 border-[6px] border-white shadow-inner bg-stone-200">
+          {userData.photo ? (
+            <img src={userData.photo} alt="User" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <span className="text-gray-400 font-bold text-3xl">PHOTO</span>
+            </div>
+          )}
+        </div>
+
+        {/* Pledge Text - Bottom Right (Masking existing text) */}
+        {/* Using a red background to cover the static text on the poster */}
+        <div className="absolute top-[1050px] left-[320px] w-[680px] min-h-[200px] z-20 flex items-center justify-center p-8 bg-[#EF3E36] rounded-2xl shadow-sm">
+          <p className="text-[36px] leading-tight font-bold text-white uppercase text-center drop-shadow-md" style={{ fontFamily: 'Inter, sans-serif' }}>
             "{pledge.text}"
           </p>
         </div>
 
         {/* Footer info */}
-        <div className="absolute bottom-6 right-10 text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 text-stone-900">
-          #PL2025-VERIFIED
+        <div className="absolute bottom-6 right-10 text-[12px] font-bold uppercase tracking-[0.2em] text-white/60">
+          #2026RESOLUTION
         </div>
 
       </div>

@@ -32,8 +32,8 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({ pledge, userDat
   return (
     <div className="flex-1 flex flex-col p-6 sm:p-10 space-y-10 bg-white/50 h-full max-w-4xl mx-auto w-full">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-stone-900 outfit tracking-tight">Preview Your Pledge</h2>
-        <p className="text-stone-500 font-light">Confirm your details before finalizing.</p>
+        <h2 className="text-3xl font-bold text-stone-900 outfit tracking-tight">Preview Your Affirmation</h2>
+        <p className="text-stone-500 font-light">Confirm your details before manifesting.</p>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center">

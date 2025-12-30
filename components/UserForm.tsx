@@ -4,12 +4,11 @@ import { UserData, Pledge } from '../types';
 interface UserFormProps {
   userData: UserData;
   setUserData: React.Dispatch<React.SetStateAction<UserData>>;
-  selectedPledge: Pledge | null;
   onBack: () => void;
   onContinue: () => void;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, selectedPledge, onBack, onContinue }) => {
+const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onContinue }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -103,7 +102,8 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, selectedPled
   const isFormValid =
     userData.fullName.trim().length > 2 &&
     validateEmail(userData.email) &&
-    validatePhone(userData.phone);
+    validatePhone(userData.phone) &&
+    (userData.customPledge?.trim().length ?? 0) > 5;
 
   return (
     <div className="w-full max-w-2xl mx-auto px-6 py-8 relative animate-fade-in">
@@ -114,10 +114,10 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, selectedPled
       <div className="space-y-10">
         <div className="text-center space-y-3">
           <h2 className="text-4xl sm:text-5xl font-black text-stone-900 outfit tracking-tighter uppercase leading-none">
-            Verification <span className="text-emerald-600">Form</span>
+            Manifestation <span className="text-emerald-600">Space</span>
           </h2>
           <p className="text-stone-400 font-light text-base max-w-md mx-auto">
-            Please provide your authentic details for the official digital certificate.
+            Write your affirmation or resolution for 2025. Speak it into existence.
           </p>
         </div>
 
@@ -167,6 +167,16 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, selectedPled
           </div>
 
           <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-stone-500 uppercase tracking-[0.3em] outfit ml-1">Your 2025 Resolution / Affirmation</label>
+              <textarea
+                placeholder="I am..."
+                value={userData.customPledge || ''}
+                onChange={(e) => setUserData(prev => ({ ...prev, customPledge: e.target.value }))}
+                className="w-full px-5 py-3.5 bg-stone-50 border border-stone-100 rounded-xl focus:ring-4 focus:ring-emerald-50/50 focus:border-emerald-500 outline-none transition-all font-medium text-stone-800 min-h-[100px] resize-none"
+              />
+            </div>
+
             <div className="space-y-2">
               <label className="text-[10px] font-black text-stone-500 uppercase tracking-[0.3em] outfit ml-1">Full Legal Name</label>
               <input
@@ -226,24 +236,15 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, selectedPled
               disabled={!isFormValid}
               onClick={onContinue}
               className={`w-full py-5 rounded-2xl font-black outfit text-lg transition-all transform shadow-lg active:scale-95 ${isFormValid
-                  ? 'bg-stone-900 text-white hover:bg-emerald-600 shadow-stone-200'
-                  : 'bg-stone-100 text-stone-300 cursor-not-allowed shadow-none'
+                ? 'bg-stone-900 text-white hover:bg-emerald-600 shadow-stone-200'
+                : 'bg-stone-100 text-stone-300 cursor-not-allowed shadow-none'
                 }`}
             >
-              {isFormValid ? 'Confirm My 2025 Pledge' : 'Complete All Fields to Sign'}
+              {isFormValid ? 'Manifest My 2025' : 'Complete All Fields to Sign'}
             </button>
           </div>
         </div>
 
-        <div className="p-5 bg-stone-50 rounded-2xl border border-stone-100 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs">📜</div>
-            <div className="text-left overflow-hidden">
-              <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest">Active Commitment</p>
-              <p className="text-stone-700 font-bold outfit truncate leading-none mt-0.5">"{selectedPledge?.text}"</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
