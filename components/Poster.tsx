@@ -9,15 +9,13 @@ interface PosterProps {
 }
 
 const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
-  // Dynamic font size calculation matching specification logic
+  // Dynamic font size calculation
   const calculateNameFontSize = (name: string) => {
-    const containerHeight = 1300;
     const charCount = name.length || 1;
-    // Formula: size = containerHeight / (charCount * 0.77)
-    // Target is ~170px for average names (5-7 chars)
-    let fontSize = Math.floor(containerHeight / (charCount * 0.77));
+    // Adjust for vertical text - slightly different formula
+    let fontSize = Math.floor(1200 / (charCount * 0.9));
     const minSize = 60;
-    const maxSize = 250;
+    const maxSize = 220;
     return Math.max(minSize, Math.min(maxSize, fontSize));
   };
 
@@ -32,114 +30,105 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
         height: '1440px',
         position: 'relative',
         overflow: 'hidden',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        fontFamily: 'Inter, sans-serif'
       }}
     >
       {/* Background Image - Full Cover */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
-        <img
-          src="/poster_2026_updated.png"
-          alt="Certificate Background"
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          crossOrigin="anonymous"
-          onError={(e) => {
-            e.currentTarget.style.display = 'none';
+      <img
+        src="/poster_2026_updated.png"
+        alt="Certificate Background"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '1080px',
+          height: '1440px',
+          objectFit: 'cover',
+          zIndex: 0
+        }}
+        crossOrigin="anonymous"
+      />
+
+      {/* 1. User Name - Vertical Text using writing-mode (NO ROTATION) */}
+      {/* This approach is more reliable for html2canvas */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '70px',
+          left: '30px',
+          width: '190px',
+          height: '1300px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 20,
+          overflow: 'visible'
+        }}
+      >
+        <div
+          style={{
+            writingMode: 'vertical-rl',
+            textOrientation: 'mixed',
+            transform: 'rotate(180deg)', // Flip so text reads bottom-to-top
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 900,
+            color: '#e63946',
+            textTransform: 'uppercase',
+            fontSize: `${nameFontSize}px`,
+            lineHeight: 1,
+            whiteSpace: 'nowrap',
+            letterSpacing: '0.02em'
           }}
-        />
-        {/* Fallback if image fails */}
-        <div style={{
-          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-          backgroundColor: '#f5f5f4', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: -1
-        }}>
-          <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#a8a29e', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Poster 2026</span>
+        >
+          {userData.fullName || 'YOUR NAME'}
         </div>
       </div>
 
-      {/* Content Overlay */}
-      <div style={{ position: 'relative', zIndex: 10, width: '100%', height: '100%' }}>
-
-        {/* 1. User Name - Vertical Text (Left Sidebar) */}
-        {/* Container: 250px wide, 1440px tall, positioned top:0 left:0 */}
-        <div style={{
-          position: 'absolute',
-          top: '0px',
-          left: '0px',
-          width: '250px',
-          height: '1440px',
-          zIndex: 20,
-          pointerEvents: 'none',
-          overflow: 'hidden'
-        }}>
-          {/* Inner rotated container: 1440px wide (to span full height), 250px tall */}
-          {/* Positioned at center of parent, then rotated -90deg */}
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: '1440px',
-            height: '250px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-            transform: 'translate(-50%, -50%) rotate(-90deg)',
-            transformOrigin: 'center center'
-          }}>
-            <h2 style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 900,
-              color: '#e63946',
-              textTransform: 'uppercase',
-              lineHeight: 1,
-              whiteSpace: 'nowrap',
-              fontSize: `${nameFontSize}px`,
-              margin: 0,
-              padding: 0
-            }}>
-              {userData.fullName || 'YOUR NAME'}
-            </h2>
-          </div>
-        </div>
-
-        {/* 2. User Photo (Circular) */}
-        {/* 590x590px circle, top: 330px, horizontally centered + 30px offset right */}
-        <div style={{
+      {/* 2. User Photo (Circular) */}
+      {/* 590x590px circle, top: 330px, centered + 30px offset */}
+      <div
+        style={{
           position: 'absolute',
           width: '590px',
           height: '590px',
           top: '330px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          marginLeft: '30px',
+          left: '570px', // 540 (center) + 30px offset
+          marginLeft: '-295px', // half of width to center
           borderRadius: '50%',
           overflow: 'hidden',
           border: '4px solid white',
           backgroundColor: '#e7e5e4',
-          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1)',
           zIndex: 10
-        }}>
-          {userData.photo ? (
-            <img
-              src={userData.photo}
-              alt="User"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              crossOrigin="anonymous"
-            />
-          ) : (
-            <div style={{
-              width: '100%', height: '100%',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}
+      >
+        {userData.photo ? (
+          <img
+            src={userData.photo}
+            alt="User"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            crossOrigin="anonymous"
+          />
+        ) : (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               backgroundColor: '#f3f4f6'
-            }}>
-              <span style={{ color: '#9ca3af', fontWeight: 'bold', fontSize: '30px' }}>PHOTO</span>
-            </div>
-          )}
-        </div>
+            }}
+          >
+            <span style={{ color: '#9ca3af', fontWeight: 'bold', fontSize: '30px' }}>PHOTO</span>
+          </div>
+        )}
+      </div>
 
-        {/* 3. Pledge Text (Red Box) */}
-        {/* 660px wide, min-height 200px, top: 980px, left: 320px */}
-        <div style={{
+      {/* 3. Pledge Text (Red Box) */}
+      {/* 660px wide, min-height 200px, top: 980px, left: 320px */}
+      <div
+        style={{
           position: 'absolute',
           top: '980px',
           left: '320px',
@@ -148,13 +137,14 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
           backgroundColor: '#EF3E36',
           borderRadius: '24px',
           padding: '40px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-start',
           zIndex: 20
-        }}>
-          <p style={{
+        }}
+      >
+        <p
+          style={{
             fontFamily: '"Big Shoulders Display", sans-serif',
             fontWeight: 900,
             fontSize: '55px',
@@ -163,15 +153,13 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
             color: '#FFFFFF',
             textTransform: 'uppercase',
             textAlign: 'left',
-            textShadow: '0 2px 4px rgba(0,0,0,0.2)',
             wordBreak: 'break-word',
             width: '100%',
             margin: 0
-          }}>
-            "{pledge.text}"
-          </p>
-        </div>
-
+          }}
+        >
+          "{pledge.text}"
+        </p>
       </div>
     </div>
   );
