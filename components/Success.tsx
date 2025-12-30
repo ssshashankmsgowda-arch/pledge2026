@@ -13,9 +13,9 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const currentUrl = window.location.origin;
-  const pledgeText = userData.customPledge || ''; // Fallback
+  const pledgeText = userData.customPledge || '';
 
-  // Helper to convert dataURI to Blob (moved up for use in handleDownload)
+  // Helper to convert dataURI to Blob
   const dataURItoBlob = (dataURI: string) => {
     const byteString = atob(dataURI.split(',')[1]);
     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -27,148 +27,126 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
     return new Blob([ab], { type: mimeString });
   };
 
-  const handleDownload = async () => {
-    setDownloading(true);
-
-    // CAPTURE THE VISIBLE PREVIEW POSTER (what you see = what you get)
+  // Generate poster image and return as File
+  const generatePosterImage = async (): Promise<File | null> => {
     const posterElement = posterRef.current;
     const wrapperElement = wrapperRef.current;
 
-    if (posterElement && wrapperElement) {
-      try {
-        // 1. Store original transform
-        const originalTransform = wrapperElement.style.transform;
+    if (!posterElement || !wrapperElement) return null;
 
-        // 2. Temporarily remove transform (make poster fullsized)
-        wrapperElement.style.transform = 'none';
-        wrapperElement.style.transformOrigin = 'top left';
+    try {
+      const originalTransform = wrapperElement.style.transform;
+      wrapperElement.style.transform = 'none';
+      wrapperElement.style.transformOrigin = 'top left';
 
-        // 3. Wait for browser to repaint
-        await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
-        // 4. Capture the full-size poster at FIXED 1080x1440
-        const canvas = await (window as any).html2canvas(posterElement, {
-          scale: 2, // High resolution (2160x2880 output)
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          width: 1080,
-          height: 1440,
-          windowWidth: 1080,
-          windowHeight: 1440,
-          scrollX: 0,
-          scrollY: 0,
-          x: 0,
-          y: 0
-        });
+      const canvas = await (window as any).html2canvas(posterElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 1080,
+        height: 1440,
+        windowWidth: 1080,
+        windowHeight: 1440,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0
+      });
 
-        // 5. Restore the original transform
-        wrapperElement.style.transform = originalTransform;
+      wrapperElement.style.transform = originalTransform;
 
-        // 6. Generate JPEG and trigger download
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-        const blob = dataURItoBlob(dataUrl);
-        const blobUrl = URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        const name = userData.fullName?.replace(/\s+/g, '_') || 'Manifestation';
-        link.download = `pledge_2026_${name}.jpg`;
-        link.href = blobUrl;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-
-      } catch (err) {
-        console.error("Download Error:", err);
-        // Restore transform on error
-        if (wrapperElement) {
-          wrapperElement.style.transform = '';
-        }
-        alert("Sorry, we couldn't generate the image. Please take a screenshot!");
-      }
-    } else {
-      alert("Error: Poster element not found.");
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      const blob = dataURItoBlob(dataUrl);
+      const fileName = `resolution_2026_${userData.fullName?.replace(/\s+/g, '_') || 'poster'}.jpg`;
+      return new File([blob], fileName, { type: 'image/jpeg' });
+    } catch (err) {
+      console.error("Image generation error:", err);
+      if (wrapperElement) wrapperElement.style.transform = '';
+      return null;
     }
+  };
+
+  // Download the poster
+  const handleDownload = async () => {
+    setDownloading(true);
+
+    const file = await generatePosterImage();
+    if (file) {
+      const blobUrl = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.download = file.name;
+      link.href = blobUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+    } else {
+      alert("Sorry, we couldn't generate the image. Please take a screenshot!");
+    }
+
     setDownloading(false);
   };
 
+  // SINGLE SHARE BUTTON - Uses native Web Share API
+  const handleShare = async () => {
+    setDownloading(true);
 
+    const shareCaption = `🎯 My 2026 Resolution is set!\n\nCreate yours at ${currentUrl}`;
 
-  const handleShare = async (platform: 'whatsapp' | 'linkedin' | 'instagram') => {
-    const shareText = `I just pledged my watch! Join me here:\n${currentUrl}`;
+    // Generate the poster image
+    const file = await generatePosterImage();
 
-    if (platform === 'whatsapp') {
-      // 1. Try Native Sharing (Mobile)
-      if (navigator.share && navigator.canShare) {
-        setDownloading(true);
-        const posterElement = posterRef.current;
-        const wrapperElement = wrapperRef.current;
-        if (posterElement && wrapperElement) {
-          try {
-            // Temporarily remove scale for capture
-            const originalTransform = wrapperElement.style.transform;
-            wrapperElement.style.transform = 'none';
-            await new Promise(resolve => setTimeout(resolve, 150));
-
-            const canvas = await (window as any).html2canvas(posterElement, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', width: 1080, height: 1440 });
-
-            wrapperElement.style.transform = originalTransform;
-
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-            const blob = dataURItoBlob(dataUrl);
-            const file = new File([blob], `pledge_2026.jpg`, { type: 'image/jpeg' });
-
-            if (navigator.canShare({ files: [file] })) {
-              await navigator.share({
-                files: [file],
-                title: 'My 2026 Resolution',
-                text: shareText,
-              });
-              setDownloading(false);
-              return; // Success, stop here
-            }
-          } catch (e) {
-            console.log("Native sharing failed, falling back to link", e);
-          }
-        }
-        setDownloading(false);
-      }
-
-      // 2. Fallback: Download + Open WhatsApp Web
-      // Auto-download first
-      await handleDownload();
-      alert("Poster downloaded! Please attach it to your message.");
-
-      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
-      window.open(url, '_blank');
-
-    } else if (platform === 'linkedin') {
-      const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
-      window.open(url, '_blank');
-    } else if (platform === 'instagram') {
-      alert("To share on Instagram: Download the poster first, then share it to your Story!");
+    if (!file) {
+      setDownloading(false);
+      alert("Could not generate image. Please download it manually.");
       return;
     }
-  };
 
-  const copyToClipboard = () => {
-    const shareText = `I just pledged my watch! Join me here:\n${currentUrl}`;
-    navigator.clipboard.writeText(shareText).then(() => {
-      alert("Link Copied!");
-    });
+    // Check if native sharing with files is supported
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: 'My 2026 Resolution',
+          text: shareCaption
+        });
+        setDownloading(false);
+        return; // Success
+      } catch (err: any) {
+        // User cancelled or error
+        if (err.name !== 'AbortError') {
+          console.log("Share failed:", err);
+        }
+      }
+    } else {
+      // Fallback: Download the file and alert user
+      const blobUrl = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.download = file.name;
+      link.href = blobUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+
+      alert("Poster downloaded! Please share it manually from your gallery/files.");
+    }
+
+    setDownloading(false);
   };
 
   return (
-    <div className="pt-24 pb-32 px-6 min-h-screen flex flex-col items-center w-full">
+    <div className="pt-24 pb-48 px-6 min-h-screen flex flex-col items-center w-full">
       {/* Header Text */}
       <div className="text-center mb-8 animate-fade-in">
-        <h2 className="text-3xl font-black text-stone-900 outfit">Your 2025 Pledge</h2>
-        <p className="text-emerald-600 font-medium">Ready to download.</p>
+        <h2 className="text-3xl font-black text-stone-900 outfit">Your 2026 Resolution</h2>
+        <p className="text-emerald-600 font-medium">Ready to share with the world!</p>
       </div>
 
-      {/* Poster Preview (Scaled) - This is what we capture for download */}
+      {/* Poster Preview (Scaled) */}
       <div
         ref={wrapperRef}
         className="transform scale-[0.35] sm:scale-[0.5] md:scale-[0.6] origin-top shadow-2xl border-[10px] border-white rounded-lg"
@@ -181,60 +159,52 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         />
       </div>
 
-      {/* Fixed Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md p-6 flex flex-col items-center gap-5 border-t border-stone-100 z-50 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
+      {/* Fixed Bottom Action Bar - SIMPLIFIED */}
+      <div className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md p-6 flex flex-col items-center gap-4 border-t border-stone-100 z-50 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.15)]">
 
-        {/* Social Share Row */}
-        <div className="flex items-center gap-8">
-          {/* Instagram */}
-          <button onClick={() => handleShare('instagram')} className="group flex flex-col items-center gap-1">
-            <div className="w-12 h-12 rounded-full border border-stone-200 flex items-center justify-center text-stone-600 group-hover:border-emerald-500 group-hover:text-emerald-600 transition-all bg-white shadow-sm">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
-            </div>
-            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest group-hover:text-emerald-600">Stories</span>
+        {/* Two Button Row: Download & Share */}
+        <div className="w-full max-w-md flex gap-3">
+
+          {/* Download Button */}
+          <button
+            onClick={handleDownload}
+            disabled={downloading}
+            className="flex-1 h-14 bg-stone-100 text-stone-800 font-bold uppercase tracking-wider rounded-2xl hover:bg-stone-200 text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Download</span>
           </button>
 
-          {/* WhatsApp */}
-          <button onClick={() => handleShare('whatsapp')} className="group flex flex-col items-center gap-1">
-            <div className="w-12 h-12 rounded-full border border-stone-200 flex items-center justify-center text-stone-600 group-hover:border-emerald-500 group-hover:text-emerald-600 transition-all bg-white shadow-sm">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.438 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-            </div>
-            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest group-hover:text-emerald-600">WhatsApp</span>
-          </button>
-
-          {/* Copy Link */}
-          <button onClick={copyToClipboard} className="group flex flex-col items-center gap-1">
-            <div className="w-12 h-12 rounded-full border border-stone-200 flex items-center justify-center text-stone-600 group-hover:border-emerald-500 group-hover:text-emerald-600 transition-all bg-white shadow-sm">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-            </div>
-            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest group-hover:text-emerald-600">Copy Link</span>
-          </button>
-        </div>
-
-        {/* Primary Download Button */}
-        <div className="w-full max-w-sm">
-          <button onClick={handleDownload} disabled={downloading}
-            className="w-full h-14 bg-stone-900 text-white font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-600 shadow-xl shadow-stone-200 text-sm flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-70">
+          {/* Share Now Button - Primary Action */}
+          <button
+            onClick={handleShare}
+            disabled={downloading}
+            className="flex-[2] h-14 bg-emerald-600 text-white font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 text-sm flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-70"
+          >
             {downloading ? (
-              <span>Generating...</span>
+              <span>Preparing...</span>
             ) : (
               <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                <span>Download Poster</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                <span>Share Now</span>
               </>
             )}
           </button>
         </div>
 
-        <button onClick={onReset} className="text-xs font-bold text-stone-300 uppercase tracking-widest hover:text-stone-500 pb-2">
-          Create New Pledge
+        {/* Create New Link */}
+        <button
+          onClick={onReset}
+          className="text-xs font-bold text-stone-400 uppercase tracking-widest hover:text-stone-600 transition-colors"
+        >
+          Create New Resolution
         </button>
 
       </div>
-
-      {/* Download Modal - Matches HTML Logic */}
-
-
     </div>
   );
 };
