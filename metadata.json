@@ -1,0 +1,7 @@
+{
+  "name": "New Year Pledge 2025",
+  "description": "A minimal, professional New Year pledge campaign platform to commit to sustainability, health, and lifestyle changes for 2025.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
