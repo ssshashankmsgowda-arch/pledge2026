@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { UserData } from '../types';
 import Poster from './Poster';
 
@@ -11,9 +11,28 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   const [downloading, setDownloading] = useState(false);
   const posterRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.3);
 
   const currentUrl = window.location.origin;
   const pledgeText = userData.customPledge || '';
+
+  // Calculate scale based on container width
+  useEffect(() => {
+    const updateScale = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const newScale = (containerWidth * 0.95) / 1080;
+        setScale(Math.min(newScale, 0.65));
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
+
+  const scaledHeight = 1440 * scale;
 
   // Helper to convert dataURI to Blob
   const dataURItoBlob = (dataURI: string) => {
@@ -96,7 +115,6 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
 
     const shareCaption = `🎯 My 2026 Resolution is set!\n\nCreate yours at ${currentUrl}`;
 
-    // Generate the poster image
     const file = await generatePosterImage();
 
     if (!file) {
@@ -105,7 +123,6 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       return;
     }
 
-    // Check if native sharing with files is supported
     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
@@ -114,15 +131,13 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
           text: shareCaption
         });
         setDownloading(false);
-        return; // Success
+        return;
       } catch (err: any) {
-        // User cancelled or error
         if (err.name !== 'AbortError') {
           console.log("Share failed:", err);
         }
       }
     } else {
-      // Fallback: Download the file and alert user
       const blobUrl = URL.createObjectURL(file);
       const link = document.createElement('a');
       link.download = file.name;
@@ -139,55 +154,73 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   };
 
   return (
-    <div className="pt-24 pb-48 px-6 min-h-screen flex flex-col items-center w-full">
-      {/* Header Text */}
-      <div className="text-center mb-8 animate-fade-in">
-        <h2 className="text-3xl font-black text-stone-900 outfit">Your 2026 Resolution</h2>
-        <p className="text-emerald-600 font-medium">Ready to share with the world!</p>
+    <div className="flex flex-col min-h-screen bg-stone-50">
+      {/* Header - Minimal padding on mobile */}
+      <div className="text-center pt-4 pb-3 sm:pt-6 sm:pb-4">
+        <h2 className="text-xl sm:text-2xl font-black text-stone-900 outfit">Your 2026 Resolution</h2>
+        <p className="text-emerald-600 font-medium text-sm">Ready to share with the world!</p>
       </div>
 
-      {/* Poster Preview (Scaled) */}
+      {/* Poster Container */}
       <div
-        ref={wrapperRef}
-        className="transform scale-[0.35] sm:scale-[0.5] md:scale-[0.6] origin-top shadow-2xl border-[10px] border-white rounded-lg"
+        ref={containerRef}
+        className="flex-1 flex items-start justify-center px-2 sm:px-4"
       >
-        <Poster
-          id="preview-poster"
-          innerRef={posterRef}
-          userData={userData}
-          pledge={{ id: 0, text: pledgeText, explanation: '' }}
-        />
+        <div
+          ref={wrapperRef}
+          className="relative shadow-2xl rounded-lg overflow-hidden bg-white"
+          style={{
+            width: 1080 * scale,
+            height: scaledHeight,
+            transform: `scale(1)` // This gets modified during capture
+          }}
+        >
+          <div
+            style={{
+              transform: `scale(${scale})`,
+              transformOrigin: 'top left',
+              width: '1080px',
+              height: '1440px'
+            }}
+          >
+            <Poster
+              id="preview-poster"
+              innerRef={posterRef}
+              userData={userData}
+              pledge={{ id: 0, text: pledgeText, explanation: '' }}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Fixed Bottom Action Bar - SIMPLIFIED */}
-      <div className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md p-6 flex flex-col items-center gap-4 border-t border-stone-100 z-50 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.15)]">
+      {/* Bottom Buttons - Sticky at bottom */}
+      <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-stone-100 p-4 sm:p-6 space-y-3 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.15)]">
 
-        {/* Two Button Row: Download & Share */}
-        <div className="w-full max-w-md flex gap-3">
-
+        {/* Two Button Row */}
+        <div className="flex gap-3 max-w-md mx-auto">
           {/* Download Button */}
           <button
             onClick={handleDownload}
             disabled={downloading}
-            className="flex-1 h-14 bg-stone-100 text-stone-800 font-bold uppercase tracking-wider rounded-2xl hover:bg-stone-200 text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70"
+            className="flex-1 h-12 sm:h-14 bg-stone-100 text-stone-800 font-bold uppercase tracking-wider rounded-xl hover:bg-stone-200 text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
             <span>Download</span>
           </button>
 
-          {/* Share Now Button - Primary Action */}
+          {/* Share Now Button */}
           <button
             onClick={handleShare}
             disabled={downloading}
-            className="flex-[2] h-14 bg-emerald-600 text-white font-black uppercase tracking-widest rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 text-sm flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-70"
+            className="flex-[2] h-12 sm:h-14 bg-emerald-600 text-white font-black uppercase tracking-widest rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-200 text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70"
           >
             {downloading ? (
               <span>Preparing...</span>
             ) : (
               <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
                 <span>Share Now</span>
@@ -199,11 +232,10 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         {/* Create New Link */}
         <button
           onClick={onReset}
-          className="text-xs font-bold text-stone-400 uppercase tracking-widest hover:text-stone-600 transition-colors"
+          className="w-full text-xs font-bold text-stone-400 uppercase tracking-widest hover:text-stone-600 transition-colors py-1"
         >
           Create New Resolution
         </button>
-
       </div>
     </div>
   );
