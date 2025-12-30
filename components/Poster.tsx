@@ -52,40 +52,38 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
       />
 
       {/* ============================================= */}
-      {/* 1. USER NAME - Vertical Text                 */}
+      {/* 1. USER NAME - Vertical Text using SVG       */}
       {/* ============================================= */}
-      {/* Container: 250px x 1440px, moved 20px left to avoid overlay */}
-      <div
+      {/* SVG handles rotation more reliably in html2canvas */}
+      <svg
         style={{
           position: 'absolute',
           top: '0px',
-          left: '-20px',
+          left: '0px',
           width: '250px',
           height: '1440px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10
+          zIndex: 10,
+          overflow: 'visible'
         }}
       >
-        <span
+        <text
+          x="125"
+          y="720"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          transform="rotate(-90, 125, 720)"
           style={{
-            writingMode: 'vertical-lr',
-            textOrientation: 'mixed',
             fontFamily: 'Inter, sans-serif',
             fontWeight: 900,
             fontSize: `${nameFontSize}px`,
-            color: '#e63946',
+            fill: '#e63946',
             textTransform: 'uppercase',
-            lineHeight: 1,
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
             letterSpacing: '0.02em'
           }}
         >
-          {userData.fullName || 'YOUR NAME'}
-        </span>
-      </div>
+          {(userData.fullName || 'YOUR NAME').toUpperCase()}
+        </text>
+      </svg>
 
       {/* ============================================= */}
       {/* 2. USER PHOTO - Circular (ABSOLUTE POSITION) */}
