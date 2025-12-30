@@ -156,6 +156,17 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
 
   return (
     <div className="flex flex-col min-h-screen bg-stone-50">
+      {/* Full-screen overlay during download/share */}
+      {downloading && (
+        <div className="fixed inset-0 bg-white z-[100] flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-lg font-bold text-stone-700">Generating your poster...</p>
+            <p className="text-sm text-stone-400 mt-1">Please wait</p>
+          </div>
+        </div>
+      )}
+
       {/* Header - Minimal padding on mobile */}
       <div className="text-center pt-4 pb-3 sm:pt-6 sm:pb-4">
         <h2 className="text-xl sm:text-2xl font-black text-stone-900 outfit">Your 2026 Resolution</h2>
