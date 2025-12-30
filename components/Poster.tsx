@@ -52,15 +52,14 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
       />
 
       {/* ============================================= */}
-      {/* 1. USER NAME - Vertical Text (NO ROTATION)   */}
+      {/* 1. USER NAME - Vertical Text                 */}
       {/* ============================================= */}
-      {/* Using writing-mode instead of transform for html2canvas compatibility */}
-      {/* Container: 250px x 1440px at position (0, 0) */}
+      {/* Container: 250px x 1440px, moved 20px left to avoid overlay */}
       <div
         style={{
           position: 'absolute',
           top: '0px',
-          left: '0px',
+          left: '-20px',
           width: '250px',
           height: '1440px',
           display: 'flex',
@@ -71,9 +70,8 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
       >
         <span
           style={{
-            writingMode: 'vertical-rl',
+            writingMode: 'vertical-lr',
             textOrientation: 'mixed',
-            transform: 'rotate(180deg)', // This rotation is just for text direction, not positioning
             fontFamily: 'Inter, sans-serif',
             fontWeight: 900,
             fontSize: `${nameFontSize}px`,
