@@ -126,7 +126,7 @@ const App: React.FC = () => {
       {/* Hidden container for rendering the poster to canvas - ALWAYS RENDERED */}
       <div style={{ position: 'fixed', top: '-5000px', left: '-5000px' }}>
         {(userData.customPledge || userData.fullName) && (
-          <div id="pledge-poster-capture">
+          <div id="pledge-poster-capture" style={{ width: '1080px', height: '1440px', overflow: 'hidden' }}>
             <Poster pledge={customPledgeObject} userData={userData} />
           </div>
         )}

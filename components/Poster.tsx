@@ -47,11 +47,25 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
       <div className="relative z-10 w-full h-full">
 
         {/* Left Sidebar - Name Overlay */}
-        <div className="absolute top-0 left-0 w-[250px] h-full z-20 flex items-center justify-center pointer-events-none">
-          {/* We use a container to handle the rotation safely */}
-          <div className="w-[1440px] h-[250px] flex items-center justify-center transform -rotate-90 origin-center">
+        <div className="absolute top-0 left-0 w-[250px] h-full z-20 pointer-events-none overflow-visible">
+          {/* Explicit positioning calculation:
+              Parent Center: (125, 720)
+              Child Size: 1440 x 250
+              Child Top-Left to center it:
+              Left = 125 - (1440/2) = -595
+              Top = 720 - (250/2) = 595
+          */}
+          <div
+            className="absolute flex items-center justify-center transform -rotate-90 origin-center text-center"
+            style={{
+              width: '1440px',
+              height: '250px',
+              left: '-595px',
+              top: '595px'
+            }}
+          >
             <h2
-              className="font-black text-[#e63946] uppercase text-center leading-none whitespace-nowrap"
+              className="font-black text-[#e63946] uppercase leading-none whitespace-nowrap"
               style={{
                 fontFamily: 'Inter, sans-serif',
                 fontSize: `${nameFontSize}px`
