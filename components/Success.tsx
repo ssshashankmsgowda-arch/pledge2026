@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { UserData } from '../types';
 import Poster from './Poster';
 
@@ -9,57 +9,13 @@ interface SuccessProps {
 
 const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   const [downloading, setDownloading] = useState(false);
-
+  const posterRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const currentUrl = window.location.origin;
   const pledgeText = userData.customPledge || ''; // Fallback
 
-  const handleDownload = async () => {
-    setDownloading(true);
-    // Use the high-res hidden capture container from App.tsx (id="pledge-poster-capture")
-    const element = document.getElementById('pledge-poster-capture');
-
-    if (element) {
-      try {
-        // Scroll to top to ensure accurate capture coordinates
-        window.scrollTo(0, 0);
-        await new Promise(resolve => setTimeout(resolve, 100)); // Short delay for repaint
-
-        const canvas = await (window as any).html2canvas(element, {
-          scale: 2, // High resolution matching HTML logic
-          useCORS: true,
-          allowTaint: true, // Allow tainted canvas if needed, though useCORS is preferred
-          backgroundColor: '#ffffff'
-        });
-
-        // Generate JPEG as requested
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-        const blob = dataURItoBlob(dataUrl);
-        const blobUrl = URL.createObjectURL(blob);
-
-        // Trigger Download
-        const link = document.createElement('a');
-        const name = userData.fullName?.replace(/\s+/g, '_') || 'Manifestation';
-        link.download = `pledge_2026_${name}.jpg`;
-        link.href = blobUrl;
-        document.body.appendChild(link); // Append to body to ensure click works in all browsers
-        link.click();
-        document.body.removeChild(link);
-
-        // Cleanup
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-
-      } catch (err) {
-        console.error("Download Error:", err);
-        alert("Sorry, we couldn't generate the image. Please take a screenshot!");
-      }
-    } else {
-      alert("Error: Capture element not found.");
-    }
-    setDownloading(false);
-  };
-
-  // Helper to convert dataURI to Blob
+  // Helper to convert dataURI to Blob (moved up for use in handleDownload)
   const dataURItoBlob = (dataURI: string) => {
     const byteString = atob(dataURI.split(',')[1]);
     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -71,6 +27,69 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
     return new Blob([ab], { type: mimeString });
   };
 
+  const handleDownload = async () => {
+    setDownloading(true);
+
+    // CAPTURE THE VISIBLE PREVIEW POSTER (what you see = what you get)
+    const posterElement = posterRef.current;
+    const wrapperElement = wrapperRef.current;
+
+    if (posterElement && wrapperElement) {
+      try {
+        // 1. Store original transform
+        const originalTransform = wrapperElement.style.transform;
+
+        // 2. Temporarily remove transform (make poster fullsized)
+        wrapperElement.style.transform = 'none';
+        wrapperElement.style.transformOrigin = 'top left';
+
+        // 3. Wait for browser to repaint
+        await new Promise(resolve => setTimeout(resolve, 150));
+
+        // 4. Capture the full-size poster
+        const canvas = await (window as any).html2canvas(posterElement, {
+          scale: 2, // High resolution
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: 1080,
+          height: 1440
+        });
+
+        // 5. Restore the original transform
+        wrapperElement.style.transform = originalTransform;
+
+        // 6. Generate JPEG and trigger download
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        const blob = dataURItoBlob(dataUrl);
+        const blobUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        const name = userData.fullName?.replace(/\s+/g, '_') || 'Manifestation';
+        link.download = `pledge_2026_${name}.jpg`;
+        link.href = blobUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+
+      } catch (err) {
+        console.error("Download Error:", err);
+        // Restore transform on error
+        if (wrapperElement) {
+          wrapperElement.style.transform = '';
+        }
+        alert("Sorry, we couldn't generate the image. Please take a screenshot!");
+      }
+    } else {
+      alert("Error: Poster element not found.");
+    }
+    setDownloading(false);
+  };
+
+
+
   const handleShare = async (platform: 'whatsapp' | 'linkedin' | 'instagram') => {
     const shareText = `I just pledged my watch! Join me here:\n${currentUrl}`;
 
@@ -78,18 +97,27 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       // 1. Try Native Sharing (Mobile)
       if (navigator.share && navigator.canShare) {
         setDownloading(true);
-        const element = document.getElementById('pledge-poster-capture');
-        if (element) {
+        const posterElement = posterRef.current;
+        const wrapperElement = wrapperRef.current;
+        if (posterElement && wrapperElement) {
           try {
-            const canvas = await (window as any).html2canvas(element, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' });
-            const dataUrl = canvas.toDataURL('image/png');
+            // Temporarily remove scale for capture
+            const originalTransform = wrapperElement.style.transform;
+            wrapperElement.style.transform = 'none';
+            await new Promise(resolve => setTimeout(resolve, 150));
+
+            const canvas = await (window as any).html2canvas(posterElement, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', width: 1080, height: 1440 });
+
+            wrapperElement.style.transform = originalTransform;
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
             const blob = dataURItoBlob(dataUrl);
-            const file = new File([blob], `pledge_2026.png`, { type: 'image/png' });
+            const file = new File([blob], `pledge_2026.jpg`, { type: 'image/jpeg' });
 
             if (navigator.canShare({ files: [file] })) {
               await navigator.share({
                 files: [file],
-                title: 'My 2025 Pledge',
+                title: 'My 2026 Resolution',
                 text: shareText,
               });
               setDownloading(false);
@@ -134,12 +162,14 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         <p className="text-emerald-600 font-medium">Ready to download.</p>
       </div>
 
-      {/* Poster Preview (Scaled) */}
-      <div className="transform scale-[0.35] sm:scale-[0.5] md:scale-[0.6] origin-top shadow-2xl border-[10px] border-white rounded-lg">
-        {/* We render a visible Poster component here for preview */}
-        {/* Pass a unique ID to avoid conflict with the hidden capture element */}
+      {/* Poster Preview (Scaled) - This is what we capture for download */}
+      <div
+        ref={wrapperRef}
+        className="transform scale-[0.35] sm:scale-[0.5] md:scale-[0.6] origin-top shadow-2xl border-[10px] border-white rounded-lg"
+      >
         <Poster
           id="preview-poster"
+          innerRef={posterRef}
           userData={userData}
           pledge={{ id: 0, text: pledgeText, explanation: '' }}
         />
