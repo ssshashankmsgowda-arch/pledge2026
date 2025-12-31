@@ -17,12 +17,12 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
         {/* Main Headline - Using Outfit font */}
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-stone-900 tracking-tighter leading-[0.95] outfit">
           One honest intention<br />
-          <span className="text-red-600 italic">for the year ahead</span>
+          <span className="text-red-600 italic">for 2026</span>
         </h1>
 
         {/* Sub-headline */}
         <p className="text-base sm:text-lg text-stone-500 max-w-xl mx-auto mt-6 leading-relaxed outfit">
-          Not a resolution list. Just one thing you truly want to commit to in 2026.
+          Share your resolution and get a personalised poster
         </p>
 
         {/* CTA Button */}
@@ -33,20 +33,6 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
           >
             My 2026 Resolution
           </button>
-        </div>
-
-        {/* Micro text below CTA */}
-        <p className="mt-4 text-xs text-stone-400 tracking-wide outfit">
-          Simple · Takes under a minute
-        </p>
-
-        {/* Below Hero Text - Moved down */}
-        <div className="mt-20 max-w-md mx-auto">
-          <p className="text-sm text-stone-400 leading-relaxed outfit">
-            You don't need big goals here.<br />
-            Just write something you'd like to stay true to this year.<br />
-            <span className="font-medium text-stone-500">That's it.</span>
-          </p>
         </div>
 
       </div>
