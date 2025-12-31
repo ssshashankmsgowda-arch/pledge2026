@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onCtaClick, isPledging, onExit }) => {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <button onClick={onExit} className="flex items-center space-x-2 group">
           <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold transition-transform group-hover:rotate-12">P</div>
-          <span className="font-bold text-xl tracking-tighter text-stone-800 outfit">Pledge2025</span>
+          <span className="font-bold text-xl tracking-tighter text-stone-800 outfit">2026 Resolution</span>
         </button>
 
         <nav className="hidden md:flex items-center space-x-8 text-sm font-bold text-stone-500 uppercase tracking-widest">
