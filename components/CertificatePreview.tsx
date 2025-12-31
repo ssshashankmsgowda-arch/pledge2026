@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Pledge, UserData } from '../types';
 import Poster from './Poster';
+import { saveUserData } from './DataStore';
 
 interface CertificatePreviewProps {
   pledge: Pledge;
@@ -68,7 +69,10 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({ pledge, userDat
       {/* Bottom Buttons - Fixed at bottom with minimal padding */}
       <div className="sticky bottom-0 bg-white border-t border-stone-100 p-4 sm:p-6 space-y-3 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
         <button
-          onClick={onConfirm}
+          onClick={() => {
+            saveUserData(userData); // Save data to Google Sheet
+            onConfirm();
+          }}
           className="w-full bg-stone-900 text-white font-bold py-4 rounded-xl transition-all duration-300 hover:bg-red-600 shadow-lg active:scale-95 outfit text-base"
         >
           Confirm & Finalize
