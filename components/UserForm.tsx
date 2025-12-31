@@ -2,6 +2,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { UserData } from '../types';
 import SimpleImageCropper from './SimpleImageCropper';
+import CountryCodeSelect from './CountryCodeSelect';
+import { countries } from '../utils/countries';
 
 interface UserFormProps {
   userData: UserData;
@@ -17,6 +19,47 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
   const [showCamera, setShowCamera] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [croppingImage, setCroppingImage] = useState<string | null>(null);
+
+  // Phone State Management
+  const [selectedCode, setSelectedCode] = useState('+91');
+  const [rawPhone, setRawPhone] = useState('');
+
+  // Initialize phone state on mount
+  useEffect(() => {
+    if (userData.phone) {
+      // Try to match existing phone to a country code
+      // Sort countries by dial_code length descending to match longest codes first (+971 before +97)
+      const sortedCountries = [...countries].sort((a, b) => b.dial_code.length - a.dial_code.length);
+
+      const matchedCountry = sortedCountries.find(c => userData.phone.startsWith(c.dial_code));
+
+      if (matchedCountry) {
+        setSelectedCode(matchedCountry.dial_code);
+        setRawPhone(userData.phone.slice(matchedCountry.dial_code.length));
+      } else {
+        // Fallback or just raw number if no match
+        // If it starts with +, assume it is full weird number, otherwise just prepend default
+        if (userData.phone.startsWith('+')) {
+          // Can't auto-detect, keep as is in raw? No, better to default +91
+          // Let's just strip 'undefined' non-numeric chars for raw
+          setRawPhone(userData.phone.replace(/[^0-9]/g, ''));
+        } else {
+          setRawPhone(userData.phone);
+        }
+      }
+    }
+  }, []);
+
+  // Sync back to userData whenever partials change
+  useEffect(() => {
+    // Combine code + raw
+    const combined = `${selectedCode}${rawPhone}`;
+    // Only update if it's different to avoid loops (though SetStateAction usually handles this)
+    if (combined !== userData.phone) {
+      setUserData(prev => ({ ...prev, phone: combined }));
+    }
+  }, [selectedCode, rawPhone, setUserData]); // Added userData.phone check inside to break loop if needed
+
 
   // Use useEffect to attach stream when video element becomes available
   useEffect(() => {
@@ -106,7 +149,8 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
   };
 
   const validateEmail = (email: string) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-  const validatePhone = (phone: string) => phone.replace(/[^0-9]/g, '').length >= 10;
+  // Basic validation just checks length now, logic handled by raw input
+  const validatePhone = (phone: string) => phone.length > 7; // Basic check, code+raw longer than 5-6
 
   const isFormValid =
     userData.fullName.trim().length > 2 &&
@@ -220,13 +264,23 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
                 </div>
                 <div>
                   <label className="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-1 ml-1">WhatsApp Number</label>
-                  <input
-                    type="tel"
-                    placeholder="+91 00000 00000"
-                    value={userData.phone}
-                    onChange={(e) => setUserData(prev => ({ ...prev, phone: e.target.value }))}
-                    className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all font-medium text-stone-800"
-                  />
+                  <div className="flex w-full">
+                    {/* Country Code Selector */}
+                    <div className="flex-shrink-0 z-20">
+                      <CountryCodeSelect
+                        selectedCode={selectedCode}
+                        onSelect={setSelectedCode}
+                      />
+                    </div>
+                    {/* Phone Number Input */}
+                    <input
+                      type="tel"
+                      placeholder="00000 00000"
+                      value={rawPhone}
+                      onChange={(e) => setRawPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                      className="w-full h-full px-4 py-3 bg-stone-50 border border-l-0 border-stone-200 rounded-r-xl focus:ring-2 focus:ring-red-500 outline-none transition-all font-medium text-stone-800"
+                    />
+                  </div>
                 </div>
               </div>
 
