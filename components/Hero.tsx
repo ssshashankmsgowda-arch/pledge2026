@@ -7,7 +7,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onStart }) => {
   return (
-    <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center overflow-hidden bg-[#fcfcfb] pt-24 pb-8">
+    <section className="relative min-h-[70vh] flex flex-col items-center justify-center text-center overflow-hidden bg-[#fcfcfb] pt-16 pb-4">
       {/* Simple clean background */}
       <div className="absolute inset-0 bg-gradient-to-b from-red-50/30 via-transparent to-[#fcfcfb]"></div>
 
@@ -21,12 +21,12 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
         </h1>
 
         {/* Sub-headline */}
-        <p className="text-base sm:text-lg text-stone-500 max-w-xl mx-auto mt-6 leading-relaxed outfit">
+        <p className="text-base sm:text-lg text-stone-500 max-w-xl mx-auto mt-4 leading-relaxed outfit">
           Share your resolution. Get personalised poster
         </p>
 
         {/* CTA Button */}
-        <div className="mt-10">
+        <div className="mt-8">
           <button
             onClick={onStart}
             className="group relative inline-flex items-center justify-center bg-red-600 text-white font-bold py-4 px-12 rounded-2xl transition-all duration-300 hover:bg-red-700 hover:scale-105 active:scale-95 shadow-xl shadow-red-100 outfit text-lg"
