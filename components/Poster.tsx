@@ -28,8 +28,9 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
   const calculatePledgeFontSize = (text: string): string => {
     const len = text.length;
     if (len < 50) return '60px';   // Short & Big
-    if (len < 100) return '55px'; // Medium (Standard)
-    return '42px';                // Long
+    if (len <= 70) return '55px';  // Medium
+    if (len < 100) return '50px';  // Medium-Small
+    return '42px';                 // Long
   };
 
   const pledgeFontSize = calculatePledgeFontSize(pledge.text);
