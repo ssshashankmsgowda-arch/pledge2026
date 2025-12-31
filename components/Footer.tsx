@@ -50,8 +50,7 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick }) => {
       </div>
 
       <div className="max-w-7xl mx-auto pt-20 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 text-stone-300 text-[10px] font-bold uppercase tracking-[0.4em]">
-        <p>© 2026 Pledge Foundation. All Rights Reserved.</p>
-        {/* Socials already in SocialSection above footer */}
+        {/* Copyright removed per user request */}
       </div>
     </footer>
   );
