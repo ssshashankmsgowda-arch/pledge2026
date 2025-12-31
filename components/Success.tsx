@@ -114,7 +114,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   const handleShare = async () => {
     setDownloading(true);
 
-    const shareCaption = `I just set my 2026 Resolution! 🎯\n\nCreate your promise here: ${window.location.href}`;
+    const shareCaption = `🎯 My 2026 Resolution is set!\n\nCreate yours at ${currentUrl}`;
 
     const file = await generatePosterImage();
 
@@ -128,6 +128,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       try {
         await navigator.share({
           files: [file],
+          title: 'My 2026 Resolution',
           text: shareCaption
         });
         setDownloading(false);
@@ -137,24 +138,17 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
           console.log("Share failed:", err);
         }
       }
-    }
+    } else {
+      const blobUrl = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.download = file.name;
+      link.href = blobUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
 
-    // Fallback: Download and Copy Text
-    const blobUrl = URL.createObjectURL(file);
-    const link = document.createElement('a');
-    link.download = file.name;
-    link.href = blobUrl;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-
-    // Try to copy caption to clipboard
-    try {
-      await navigator.clipboard.writeText(shareCaption);
-      alert("Poster downloaded and caption copied to clipboard! You can paste it when sharing.");
-    } catch (e) {
-      alert("Poster downloaded! Please share it manually.");
+      alert("Poster downloaded! Please share it manually from your gallery/files.");
     }
 
     setDownloading(false);
