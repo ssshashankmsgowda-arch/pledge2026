@@ -11,90 +11,131 @@ interface SimpleImageCropperProps {
 const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({ imageSrc, onCropComplete, onCancel }) => {
     const [zoom, setZoom] = useState(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+    // Refs for gesture tracking
     const containerRef = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLImageElement>(null);
+    const pointersRef = useRef<Map<number, { x: number, y: number }>>(new Map());
+    const prevDistanceRef = useRef<number | null>(null);
+    const startPosRef = useRef<{ x: number, y: number } | null>(null);
+    const lastPosRef = useRef<{ x: number, y: number }>({ x: 0, y: 0 }); // To track position between drags
 
     // Constants
-    const CROP_SIZE = 280; // Size of the visible circle on screen
+    const CROP_SIZE = 280;
+    const MIN_ZOOM = 1;
+    const MAX_ZOOM = 5;
+
+    // Helper: Calculate distance between two points
+    const getDistance = (p1: { x: number, y: number }, p2: { x: number, y: number }) => {
+        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+    };
+
+    // Helper: Calculate center of multiple points
+    const getCenter = (p1: { x: number, y: number }, p2: { x: number, y: number }) => {
+        return {
+            x: (p1.x + p2.x) / 2,
+            y: (p1.y + p2.y) / 2
+        };
+    };
 
     const handlePointerDown = (e: React.PointerEvent) => {
-        setIsDragging(true);
-        setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
-        // Capture pointer to track moving outside element
         (e.target as HTMLElement).setPointerCapture(e.pointerId);
+        pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        // If starting a drag (1 finger), remember where we started relative to current position
+        if (pointersRef.current.size === 1) {
+            startPosRef.current = {
+                x: e.clientX - position.x,
+                y: e.clientY - position.y
+            };
+        }
+        // If 2 fingers, reset distance tracking for pinch
+        else if (pointersRef.current.size === 2) {
+            const points = Array.from(pointersRef.current.values());
+            prevDistanceRef.current = getDistance(points[0], points[1]);
+        }
     };
 
     const handlePointerMove = (e: React.PointerEvent) => {
-        if (!isDragging) return;
-        setPosition({
-            x: e.clientX - dragStart.x,
-            y: e.clientY - dragStart.y
-        });
+        if (!pointersRef.current.has(e.pointerId)) return;
+
+        // Update this pointer's position
+        pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        const points = Array.from(pointersRef.current.values());
+
+        if (points.length === 1 && startPosRef.current) {
+            // --- PANNING ---
+            setPosition({
+                x: e.clientX - startPosRef.current.x,
+                y: e.clientY - startPosRef.current.y
+            });
+        }
+        else if (points.length === 2) {
+            // --- PINCH ZOOMING ---
+            const currentDistance = getDistance(points[0], points[1]);
+
+            if (prevDistanceRef.current) {
+                const delta = currentDistance - prevDistanceRef.current;
+                // Sensible zoom speed factor
+                const zoomFactor = delta * 0.005;
+
+                setZoom(prev => {
+                    const newZoom = Math.min(Math.max(prev + zoomFactor, MIN_ZOOM), MAX_ZOOM);
+                    return newZoom;
+                });
+            }
+            prevDistanceRef.current = currentDistance;
+        }
     };
 
     const handlePointerUp = (e: React.PointerEvent) => {
-        setIsDragging(false);
         (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        pointersRef.current.delete(e.pointerId);
+
+        // Reset pinch tracking
+        if (pointersRef.current.size < 2) {
+            prevDistanceRef.current = null;
+        }
+
+        // If 1 finger remains, reset pan anchor to prevent jumping
+        if (pointersRef.current.size === 1) {
+            const remaining = pointersRef.current.values().next().value;
+            startPosRef.current = {
+                x: remaining.x - position.x,
+                y: remaining.y - position.y
+            };
+        } else {
+            startPosRef.current = null;
+        }
+    };
+
+    const handleWheel = (e: React.WheelEvent) => {
+        e.preventDefault();
+        const delta = -e.deltaY * 0.001;
+        setZoom(prev => Math.min(Math.max(prev + delta, MIN_ZOOM), MAX_ZOOM));
     };
 
     const cropImage = async () => {
         if (!imageRef.current) return;
 
-        // Calculate the crop logic
-        // We visually see a circle of CROP_SIZE in the center of the container.
-        // The image has been scaled by 'zoom' and moved by 'position'.
-
+        // --- CROP CALCULATION LOGIC (Same as before) ---
         const imageElement = imageRef.current;
-
-        // Original (Natural) dimensions
         const naturalWidth = imageElement.naturalWidth;
         const naturalHeight = imageElement.naturalHeight;
-
-        // Displayed dimensions (before our manual CSS transform/zooming logic is considered for the crop rect math, 
-        // we need to know how big it is Rendered).
-        // Actually, simple math:
-        // Scale factor between "Natural" and "Rendered on screen at zoom=1"
-        // Let's assume the image fits 'contain' initially or something similar.
-        // But here we are just putting the image in a div.
-
-        const renderedWidth = imageElement.width * zoom;
-        const renderedHeight = imageElement.height * zoom;
-
-        // The center of the container
         const containerW = containerRef.current?.offsetWidth || 0;
         const containerH = containerRef.current?.offsetHeight || 0;
-
-        // Center of the crop circle relative to container [is basically center]
-        const cropCenterX = containerW / 2;
-        const cropCenterY = containerH / 2;
-
-        // Top-Left of the crop circle relative to container
-        const cropX_in_Container = cropCenterX - (CROP_SIZE / 2);
-        const cropY_in_Container = cropCenterY - (CROP_SIZE / 2);
-
-        // Image Top-Left relative to container
-        // We center the image initially, then add 'position'
-        const imageNonZoomedWidth = containerW * 0.8; // We initially limit max-width
-        // Wait, CSS styling below is clearer.
-        // Let's say image centers itself. The transform is translate(defaultCenter + pos).
-
-        // Let's rely on getBoundingClientRect for what user sees
         const imageRect = imageElement.getBoundingClientRect();
         const containerRect = containerRef.current!.getBoundingClientRect();
 
-        // Where is the crop box on the screen?
         const cropRect = {
             left: containerRect.left + (containerRect.width - CROP_SIZE) / 2,
             top: containerRect.top + (containerRect.height - CROP_SIZE) / 2,
         };
 
-        // Relative cut
         const relativeX = cropRect.left - imageRect.left;
         const relativeY = cropRect.top - imageRect.top;
 
-        // Scale back to natural size
         const scaleX = naturalWidth / imageRect.width;
         const scaleY = naturalHeight / imageRect.height;
 
@@ -127,15 +168,15 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({ imageSrc, onCro
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
                     onPointerLeave={handlePointerUp}
+                    onWheel={handleWheel}
                 >
                     {/* Image Layer */}
                     <div className="flex items-center justify-center w-full h-full pointer-events-none">
-                        {/* pointer-events-none on wrapper so the PARENT gets the events for easier tracking */}
                         <img
                             ref={imageRef}
                             src={imageSrc}
                             alt="Crop target"
-                            className="max-w-[80%] max-h-[80%] object-contain origin-center transition-transform duration-0"
+                            className="max-w-[80%] max-h-[80%] object-contain origin-center transition-transform duration-0 will-change-transform"
                             style={{
                                 transform: `translate(${position.x}px, ${position.y}px) scale(${zoom})`,
                                 touchAction: 'none'
@@ -150,7 +191,7 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({ imageSrc, onCro
                             style={{
                                 width: `${CROP_SIZE}px`,
                                 height: `${CROP_SIZE}px`,
-                                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.7)', // Darken everything outside
+                                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.7)',
                                 borderRadius: '50%',
                                 border: '2px solid white'
                             }}
@@ -164,8 +205,8 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({ imageSrc, onCro
                         <span className="text-stone-400 text-xs font-bold">-</span>
                         <input
                             type="range"
-                            min="1"
-                            max="3"
+                            min={MIN_ZOOM}
+                            max={MAX_ZOOM}
                             step="0.05"
                             value={zoom}
                             onChange={(e) => setZoom(Number(e.target.value))}
@@ -191,7 +232,7 @@ const SimpleImageCropper: React.FC<SimpleImageCropperProps> = ({ imageSrc, onCro
                 </div>
 
                 <p className="text-center text-stone-500 text-[10px] uppercase tracking-widest">
-                    Drag to Move • Pinch/Slide to Zoom
+                    Drag to Move • Pinch or Scroll to Zoom
                 </p>
             </div>
         </div>
