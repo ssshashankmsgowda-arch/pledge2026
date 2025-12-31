@@ -16,7 +16,7 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
 
         {/* Main Headline - Using Outfit font */}
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-stone-900 tracking-tighter leading-[0.95] outfit">
-          One honest promise<br />
+          One honest intention<br />
           <span className="text-red-600 italic">for the year ahead</span>
         </h1>
 
