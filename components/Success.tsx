@@ -61,7 +61,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       await new Promise(resolve => setTimeout(resolve, 150));
 
       const canvas = await (window as any).html2canvas(posterElement, {
-        scale: 2,
+        scale: 4,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -78,10 +78,10 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       // Restore the original transform
       scaleWrapper.style.transform = originalTransform;
 
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      const dataUrl = canvas.toDataURL('image/png');
       const blob = dataURItoBlob(dataUrl);
-      const fileName = `resolution_2026_${userData.fullName?.replace(/\s+/g, '_') || 'poster'}.jpg`;
-      return new File([blob], fileName, { type: 'image/jpeg' });
+      const fileName = `resolution_2026_${userData.fullName?.replace(/\s+/g, '_') || 'poster'}.png`;
+      return new File([blob], fileName, { type: 'image/png' });
     } catch (err) {
       console.error("Image generation error:", err);
       if (scaleWrapper) scaleWrapper.style.transform = `scale(${scale})`;
