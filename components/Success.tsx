@@ -139,30 +139,28 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   const handleShare = async () => {
 
     // FAST PATH: File is ready. Share immediately.
-    // iOS requires this to be synchronous-ish (no long awaits).
     if (preGeneratedFile && navigator.share) {
       try {
-        if (navigator.canShare && navigator.canShare({ files: [preGeneratedFile] })) {
-          await navigator.share({
-            files: [preGeneratedFile],
-            title: 'My 2026 Resolution',
-            text: `🎯 My 2026 Resolution is set!\n\nCreate yours at ${currentUrl}`
-          });
-        } else {
-          throw new Error("Cannot share file");
+        // Attempt share directly (skipping canShare check which can be flaky on iOS)
+        await navigator.share({
+          files: [preGeneratedFile],
+          title: 'My 2026 Resolution',
+          text: `🎯 My 2026 Resolution is set!\n\nCreate yours at ${currentUrl}`
+        });
+      } catch (e: any) {
+        console.log("Fast share failed", e);
+        // Only fallback to download if it wasn't a user cancellation
+        // iOS AbortError happens if user closes share sheet OR if platform denies it.
+        // It's safer to NOT auto-download on AbortError to avoid annoying user who just cancelled.
+        if (e.name !== 'AbortError') {
+          performDownload(preGeneratedFile);
         }
-      } catch (e) {
-        console.log("Fast share failed, falling back to download", e);
-        // If share fails, download it immediately
-        performDownload(preGeneratedFile);
       }
       return;
     }
 
     // SLOW PATH: File is NOT ready.
-    // On iOS, if we wait for generation, share will FAIL.
-    // So we switch to "Generating..." -> DOWNLOAD.
-
+    // Use fallback to download because sharing usually fails if async.
     setDownloading(true);
 
     try {
@@ -171,8 +169,6 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         // We can't share now because we waited too long.
         // Just download it to be safe.
         performDownload(file);
-        // Optional: Alert user
-        // alert("Poster downloaded! (Share unavailable while generating)");
       } else {
         alert("Could not generate poster.");
       }
