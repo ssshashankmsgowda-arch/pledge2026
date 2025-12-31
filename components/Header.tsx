@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ onCtaClick, isPledging, onExit }) => {
             onClick={onCtaClick}
             className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all transform active:scale-95 shadow-lg shadow-red-100"
           >
-            Start Manifesting
+            Create My Promise
           </button>
         ) : (
           <button
