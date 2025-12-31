@@ -14,14 +14,14 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
       {/* Content Layer */}
       <div className="relative z-10 w-full max-w-3xl px-6 flex flex-col items-center">
 
-        {/* Main Headline */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-stone-900 tracking-tight leading-[1.1] outfit">
+        {/* Main Headline - Using Outfit font */}
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-stone-900 tracking-tighter leading-[0.95] outfit">
           One honest promise<br />
-          <span className="text-red-600">for the year ahead</span>
+          <span className="text-red-600 italic">for the year ahead</span>
         </h1>
 
         {/* Sub-headline */}
-        <p className="text-base sm:text-lg text-stone-500 max-w-xl mx-auto mt-6 leading-relaxed">
+        <p className="text-base sm:text-lg text-stone-500 max-w-xl mx-auto mt-6 leading-relaxed outfit">
           Not a resolution list. Just one thing you truly want to commit to in 2026.
         </p>
 
@@ -36,13 +36,13 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
         </div>
 
         {/* Micro text below CTA */}
-        <p className="mt-4 text-xs text-stone-400 tracking-wide">
+        <p className="mt-4 text-xs text-stone-400 tracking-wide outfit">
           Private · Simple · Takes under a minute
         </p>
 
         {/* Below Hero Text */}
         <div className="mt-16 max-w-md mx-auto">
-          <p className="text-sm text-stone-400 leading-relaxed">
+          <p className="text-sm text-stone-400 leading-relaxed outfit">
             You don't need big goals here.<br />
             Just write something you'd like to stay true to this year.<br />
             <span className="font-medium text-stone-500">That's it.</span>
