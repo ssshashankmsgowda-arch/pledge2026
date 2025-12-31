@@ -55,8 +55,8 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
     if (!posterElement) return null;
 
     try {
-      // Small delay to ensure render
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Ensure element is visible/rendered for capture
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       const canvas = await (window as any).html2canvas(posterElement, {
         scale: 4, // High quality
@@ -70,10 +70,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         scrollX: 0,
         scrollY: 0,
         x: 0,
-        y: 0,
-        onclone: (clonedDoc: Document) => {
-          // Callback to ensure fonts/images are ready in clone
-        }
+        y: 0
       });
 
       const dataUrl = canvas.toDataURL('image/png');
@@ -91,8 +88,8 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
     let mounted = true;
 
     const prepareFile = async () => {
-      // Reduced Wait Time: 400ms (was 800ms) to unlock faster
-      await new Promise(r => setTimeout(r, 400));
+      // Wait 600ms to ensure fonts and layout are stable
+      await new Promise(r => setTimeout(r, 600));
       if (!mounted) return;
 
       const file = await generatePosterImage();
@@ -107,7 +104,22 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   }, [userData]);
 
 
-  // Download the poster
+  // Central download logic
+  const performDownload = (file: File) => {
+    // Force octet-stream to prevent iOS from opening in preview
+    const blob = new Blob([file], { type: 'application/octet-stream' });
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = file.name;
+    link.href = blobUrl;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+  };
+
+
   const handleDownload = async () => {
     // Only show loader if needed
     if (!preGeneratedFile) setDownloading(true);
@@ -115,17 +127,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
     const file = preGeneratedFile || await generatePosterImage();
 
     if (file) {
-      // Force octet-stream to prevent iOS from opening in preview
-      const blob = new Blob([file], { type: 'application/octet-stream' });
-      const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.download = file.name;
-      link.href = blobUrl;
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+      performDownload(file);
     } else {
       alert("Sorry, we couldn't generate the image. Please take a screenshot!");
     }
@@ -135,45 +137,47 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
 
   // SINGLE SHARE BUTTON - Uses native Web Share API
   const handleShare = async () => {
-    // ONLY show loading spinner if we fall back to generating on the fly
-    // If preReferenceFile exists, we skip this to make it feel INSTANT.
-    if (!preGeneratedFile) {
-      setDownloading(true);
-    }
 
-    const shareCaption = `🎯 My 2026 Resolution is set!\n\nCreate yours at ${currentUrl}`;
-
-    if (!navigator.share) {
-      alert("Sharing not supported on this browser. Please download the image.");
-      setDownloading(false);
+    // FAST PATH: File is ready. Share immediately.
+    // iOS requires this to be synchronous-ish (no long awaits).
+    if (preGeneratedFile && navigator.share) {
+      try {
+        if (navigator.canShare && navigator.canShare({ files: [preGeneratedFile] })) {
+          await navigator.share({
+            files: [preGeneratedFile],
+            title: 'My 2026 Resolution',
+            text: `🎯 My 2026 Resolution is set!\n\nCreate yours at ${currentUrl}`
+          });
+        } else {
+          throw new Error("Cannot share file");
+        }
+      } catch (e) {
+        console.log("Fast share failed, falling back to download", e);
+        // If share fails, download it immediately
+        performDownload(preGeneratedFile);
+      }
       return;
     }
 
+    // SLOW PATH: File is NOT ready.
+    // On iOS, if we wait for generation, share will FAIL.
+    // So we switch to "Generating..." -> DOWNLOAD.
+
+    setDownloading(true);
+
     try {
-      // Use pre-generated file if ready, otherwise generate now
-      const fileToShare = preGeneratedFile || await generatePosterImage();
-
-      if (!fileToShare) throw new Error("Could not generate file");
-
-      // Try file sharing
-      if (navigator.canShare && navigator.canShare({ files: [fileToShare] })) {
-        await navigator.share({
-          files: [fileToShare],
-          title: 'My 2026 Resolution',
-          text: shareCaption
-        });
+      const file = await generatePosterImage();
+      if (file) {
+        // We can't share now because we waited too long.
+        // Just download it to be safe.
+        performDownload(file);
+        // Optional: Alert user
+        // alert("Poster downloaded! (Share unavailable while generating)");
       } else {
-        // Fallback to text sharing
-        await navigator.share({
-          title: 'My 2026 Resolution',
-          text: shareCaption,
-          url: currentUrl
-        });
+        alert("Could not generate poster.");
       }
-    } catch (err: any) {
-      if (err.name !== 'AbortError') {
-        console.log("Share failed:", err);
-      }
+    } catch (e) {
+      console.error(e);
     } finally {
       setDownloading(false);
     }
@@ -212,7 +216,8 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         <div className="fixed inset-0 bg-white/90 z-[100] flex items-center justify-center animate-fade-in">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-lg font-bold text-stone-700">One moment...</p>
+            <p className="text-lg font-bold text-stone-700">Generating Poster...</p>
+            <p className="text-xs text-stone-400 mt-2">Downloading automatically...</p>
           </div>
         </div>
       )}
