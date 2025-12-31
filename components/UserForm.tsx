@@ -222,7 +222,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
                   <label className="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-1 ml-1">WhatsApp Number</label>
                   <input
                     type="tel"
-                    placeholder="+91 98765 43210"
+                    placeholder="+91 00000 00000"
                     value={userData.phone}
                     onChange={(e) => setUserData(prev => ({ ...prev, phone: e.target.value }))}
                     className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all font-medium text-stone-800"
