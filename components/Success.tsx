@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { UserData } from '../types';
 import Poster from './Poster';
@@ -9,10 +10,12 @@ interface SuccessProps {
 
 const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
   const [downloading, setDownloading] = useState(false);
-  const posterRef = useRef<HTMLDivElement>(null);
-  const scaleWrapperRef = useRef<HTMLDivElement>(null);
+
+  // Independent refs for preview and hidden capture source
+  const hiddenPosterRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.3);
+  const [preGeneratedFile, setPreGeneratedFile] = useState<File | null>(null);
 
   const currentUrl = window.location.origin;
   const pledgeText = userData.customPledge || '';
@@ -46,22 +49,17 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
     return new Blob([ab], { type: mimeString });
   };
 
-  // Generate poster image and return as File
+  // Generate poster image from the hidden high-res element
   const generatePosterImage = async (): Promise<File | null> => {
-    const posterElement = posterRef.current;
-    const scaleWrapper = scaleWrapperRef.current;
-
-    if (!posterElement || !scaleWrapper) return null;
+    const posterElement = hiddenPosterRef.current;
+    if (!posterElement) return null;
 
     try {
-      // Store original transform and temporarily remove it
-      const originalTransform = scaleWrapper.style.transform;
-      scaleWrapper.style.transform = 'none';
-
-      await new Promise(resolve => setTimeout(resolve, 150));
+      // Small delay to ensure render
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       const canvas = await (window as any).html2canvas(posterElement, {
-        scale: 4,
+        scale: 4, // High quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -72,11 +70,11 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         scrollX: 0,
         scrollY: 0,
         x: 0,
-        y: 0
+        y: 0,
+        onclone: (clonedDoc: Document) => {
+          // Callback to ensure fonts/images are ready in clone
+        }
       });
-
-      // Restore the original transform
-      scaleWrapper.style.transform = originalTransform;
 
       const dataUrl = canvas.toDataURL('image/png');
       const blob = dataURItoBlob(dataUrl);
@@ -84,16 +82,37 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       return new File([blob], fileName, { type: 'image/png' });
     } catch (err) {
       console.error("Image generation error:", err);
-      if (scaleWrapper) scaleWrapper.style.transform = `scale(${scale})`;
       return null;
     }
   };
+
+  // Pre-generate image on mount
+  useEffect(() => {
+    let mounted = true;
+
+    const prepareFile = async () => {
+      // Wait a bit for initial render and fonts
+      await new Promise(r => setTimeout(r, 800));
+      if (!mounted) return;
+
+      const file = await generatePosterImage();
+      if (mounted && file) {
+        setPreGeneratedFile(file);
+      }
+    };
+
+    prepareFile();
+
+    return () => { mounted = false; };
+  }, [userData]);
+
 
   // Download the poster
   const handleDownload = async () => {
     setDownloading(true);
 
-    const file = await generatePosterImage();
+    const file = preGeneratedFile || await generatePosterImage();
+
     if (file) {
       // Force octet-stream to prevent iOS from opening in preview
       const blob = new Blob([file], { type: 'application/octet-stream' });
@@ -101,7 +120,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       const link = document.createElement('a');
       link.download = file.name;
       link.href = blobUrl;
-      link.style.display = 'none'; // Ensure it's hidden
+      link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -119,53 +138,77 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
 
     const shareCaption = `🎯 My 2026 Resolution is set!\n\nCreate yours at ${currentUrl}`;
 
-    const file = await generatePosterImage();
-
-    if (!file) {
+    if (!navigator.share) {
+      alert("Sharing not supported on this browser. Please download the image.");
       setDownloading(false);
-      alert("Could not generate image. Please download it manually.");
       return;
     }
 
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
+    try {
+      // Use pre-generated file if ready, otherwise generate now
+      const fileToShare = preGeneratedFile || await generatePosterImage();
+
+      if (!fileToShare) throw new Error("Could not generate file");
+
+      // Try file sharing
+      if (navigator.canShare && navigator.canShare({ files: [fileToShare] })) {
         await navigator.share({
-          files: [file],
+          files: [fileToShare],
           title: 'My 2026 Resolution',
           text: shareCaption
         });
-        setDownloading(false);
-        return;
-      } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          console.log("Share failed:", err);
-        }
+      } else {
+        // Fallback to text sharing
+        await navigator.share({
+          title: 'My 2026 Resolution',
+          text: shareCaption,
+          url: currentUrl
+        });
       }
-    } else {
-      const blobUrl = URL.createObjectURL(file);
-      const link = document.createElement('a');
-      link.download = file.name;
-      link.href = blobUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-
-      alert("Poster downloaded! Please share it manually from your gallery/files.");
+    } catch (err: any) {
+      if (err.name !== 'AbortError') {
+        console.log("Share failed:", err);
+        // Silent fail or optional alert
+      }
+    } finally {
+      setDownloading(false);
     }
-
-    setDownloading(false);
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-stone-50">
+    <div className="flex flex-col min-h-screen bg-stone-50 overflow-x-hidden">
+
+      {/* 
+        HIDDEN OFFLINE RENDER TARGET 
+        This is exactly 1080x1440, absolute positioned off screen.
+        Used for high-res capture without affecting UI.
+      */}
+      <div
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          top: 0,
+          width: '1080px',
+          height: '1440px',
+          zIndex: -1,
+          pointerEvents: 'none'
+        }}
+      >
+        <div ref={hiddenPosterRef} style={{ width: 1080, height: 1440, position: 'relative', backgroundColor: 'white' }}>
+          <Poster
+            id="hidden-poster-source"
+            userData={userData}
+            pledge={{ id: 0, text: pledgeText, explanation: '' }}
+          />
+        </div>
+      </div>
+
       {/* Full-screen overlay during download/share */}
       {downloading && (
-        <div className="fixed inset-0 bg-white z-[100] flex items-center justify-center">
+        <div className="fixed inset-0 bg-white/90 z-[100] flex items-center justify-center animate-fade-in">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-lg font-bold text-stone-700">Generating your poster...</p>
-            <p className="text-sm text-stone-400 mt-1">Please wait</p>
+            <p className="text-lg font-bold text-stone-700">One moment...</p>
           </div>
         </div>
       )}
@@ -176,10 +219,10 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
         <p className="text-red-600 font-medium text-sm">Ready to share with the world!</p>
       </div>
 
-      {/* Poster Container */}
+      {/* Poster Container (Visual Preview) */}
       <div
         ref={containerRef}
-        className="flex-1 flex items-start justify-center px-2 sm:px-4"
+        className="flex-1 flex items-start justify-center px-2 sm:px-4 mb-24"
       >
         <div
           className="relative shadow-2xl rounded-lg overflow-hidden bg-white"
@@ -188,9 +231,8 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
             height: scaledHeight
           }}
         >
-          {/* This div has the scale transform that we manipulate during capture */}
+          {/* Visual Preview - Scaled using transform */}
           <div
-            ref={scaleWrapperRef}
             style={{
               transform: `scale(${scale})`,
               transformOrigin: 'top left',
@@ -200,7 +242,6 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
           >
             <Poster
               id="preview-poster"
-              innerRef={posterRef}
               userData={userData}
               pledge={{ id: 0, text: pledgeText, explanation: '' }}
             />
@@ -209,7 +250,7 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
       </div>
 
       {/* Bottom Buttons - Sticky at bottom */}
-      <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-stone-100 p-4 sm:p-6 space-y-3 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.15)]">
+      <div className="fixed bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-stone-100 p-4 sm:p-6 space-y-3 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.15)] z-50">
 
         {/* Two Button Row */}
         <div className="flex gap-3 max-w-md mx-auto">
@@ -231,16 +272,10 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
             disabled={downloading}
             className="flex-[2] h-12 sm:h-14 bg-red-600 text-white font-black uppercase tracking-widest rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-70"
           >
-            {downloading ? (
-              <span>Preparing...</span>
-            ) : (
-              <>
-                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-                <span>Share Now</span>
-              </>
-            )}
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            <span>Share Now</span>
           </button>
         </div>
 
