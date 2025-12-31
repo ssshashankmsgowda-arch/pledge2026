@@ -39,6 +39,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
                         <p className="mb-2">We collect the minimum amount of information necessary to create your personalized experience. This includes:</p>
                         <ul className="list-disc pl-5 space-y-1 marker:text-red-500">
                             <li><strong>Full Name:</strong> To personalize your resolution poster and certificate.</li>
+                            <li><strong>Personal Photo:</strong> To verify your identity and personalize the resolution poster.</li>
                             <li><strong>Contact Information:</strong> Phone number and email address to facilitate communication.</li>
                             <li><strong>Resolution Statement:</strong> The specific goal or pledge you wish to commit to for 2026.</li>
                         </ul>
