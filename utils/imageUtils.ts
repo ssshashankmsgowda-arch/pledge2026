@@ -20,14 +20,34 @@ export async function getCroppedImg(
         return ''
     }
 
-    // set canvas size to match the desired crop size
-    canvas.width = pixelCrop.width
-    canvas.height = pixelCrop.height
+    // set canvas size to match the desired crop size, but enforce a minimum quality
+    const MIN_SIZE = 1200;
+    const aspect = pixelCrop.width / pixelCrop.height;
 
-    // draw the image
-    // The crop object tells us WHERE in the source image to start cutting (x,y)
-    // and how big of a slice to take (width, height).
-    // We draw that slice onto our canvas at 0,0 filling the whole canvas.
+    // We want the output to be at least MIN_SIZE on the smallest dimension
+    let outputWidth = pixelCrop.width;
+    let outputHeight = pixelCrop.height;
+
+    // Use a simpler approach: Always output a high-res square-ish image if possible.
+    // Or just enforce 1200px width/height scaling.
+
+    // Logic: If natural crop is smaller than 1200, scale it up.
+    if (Math.min(outputWidth, outputHeight) < MIN_SIZE) {
+        if (outputWidth < outputHeight) {
+            outputWidth = MIN_SIZE;
+            outputHeight = MIN_SIZE / aspect;
+        } else {
+            outputHeight = MIN_SIZE;
+            outputWidth = MIN_SIZE * aspect;
+        }
+    }
+
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
+
+    // Enable high quality image scaling
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
     ctx.drawImage(
         image,
@@ -37,8 +57,8 @@ export async function getCroppedImg(
         pixelCrop.height,
         0,
         0,
-        pixelCrop.width,
-        pixelCrop.height
+        outputWidth,
+        outputHeight
     )
 
     // As Base64 string

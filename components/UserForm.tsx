@@ -40,7 +40,14 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
 
   const startCamera = async () => {
     try {
-      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+      const s = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: 'user',
+          width: { ideal: 4096 },
+          height: { ideal: 2160 }
+        },
+        audio: false
+      });
       setStream(s);
       setShowCamera(true);
     } catch (err) {
