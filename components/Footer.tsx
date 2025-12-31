@@ -7,7 +7,7 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onPrivacyClick }) => {
   return (
-    <footer className="bg-stone-50 pt-20 pb-12 px-6 border-t border-stone-100">
+    <footer className="bg-stone-100 pt-20 pb-12 px-6 border-t border-stone-200">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-between gap-12">
 
         {/* Brand Section */}
