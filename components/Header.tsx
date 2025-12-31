@@ -28,12 +28,8 @@ const Header: React.FC<HeaderProps> = ({ onCtaClick, isPledging, onExit }) => {
         </nav>
 
         {!isPledging ? (
-          <button
-            onClick={onCtaClick}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all transform active:scale-95 shadow-lg shadow-red-100"
-          >
-            Create My Promise
-          </button>
+          /* Button removed per user request */
+          <div />
         ) : (
           <button
             onClick={onExit}
