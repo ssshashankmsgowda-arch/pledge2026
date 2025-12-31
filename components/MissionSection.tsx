@@ -41,8 +41,8 @@ const MissionSection: React.FC = () => {
                 <div className="pt-4 flex items-center space-x-4">
                   <div className="w-10 h-10 rounded-full bg-stone-200"></div>
                   <div>
-                    <p className="text-sm font-bold text-stone-900">Sarah Jenkins</p>
-                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Mindset Coach</p>
+                    <p className="text-sm font-bold text-stone-900">Hafiz Khan</p>
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Creator</p>
                   </div>
                 </div>
               </div>

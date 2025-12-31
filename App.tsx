@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Step, Pledge, UserData } from './types';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import ImpactSection from './components/ImpactSection';
+
 import UserForm from './components/UserForm';
 import CertificatePreview from './components/CertificatePreview';
 import Success from './components/Success';
@@ -104,20 +104,7 @@ const App: React.FC = () => {
       {!inFlow ? (
         <div className="animate-fade-in">
           <Hero onStart={() => startFlow()} />
-
-          <div className="py-12 bg-white border-b border-stone-50">
-            {/* Removed FeaturedPledges */}
-
-          </div>
-
-          <ImpactSection />
-
           <MissionSection />
-
-          <div className="space-y-4 pb-20 bg-stone-50/30">
-            {/* Removed CategoryHeroes */}
-          </div>
-
         </div>
       ) : (
         <div className="pt-24 min-h-screen bg-[#fcfcfb] flex items-start justify-center">
