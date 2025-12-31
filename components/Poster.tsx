@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Pledge, UserData } from '../types';
 
@@ -22,6 +23,17 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
   };
 
   const nameFontSize = calculateNameFontSize(userData.fullName);
+
+  // Dynamic font size for pledge text (based on length)
+  const calculatePledgeFontSize = (text: string): string => {
+    const len = text.length;
+    if (len < 50) return '55px';   // Large constraint
+    if (len < 100) return '42px'; // Medium constraint
+    if (len < 150) return '34px'; // Small constraint
+    return '28px';                // Extra small constraint
+  };
+
+  const pledgeFontSize = calculatePledgeFontSize(pledge.text);
 
   return (
     <div
@@ -156,7 +168,7 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
           style={{
             fontFamily: '"Big Shoulders Display", sans-serif',
             fontWeight: 900,
-            fontSize: '55px',
+            fontSize: pledgeFontSize,
             letterSpacing: '0.05em',
             lineHeight: 1.15,
             color: '#FFFFFF',
