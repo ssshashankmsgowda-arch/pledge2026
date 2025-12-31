@@ -7,7 +7,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onStart }) => {
   return (
-    <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center overflow-hidden bg-[#fcfcfb]">
+    <section className="relative min-h-[75vh] flex flex-col items-center justify-center text-center overflow-hidden bg-[#fcfcfb] pb-8">
       {/* Simple clean background */}
       <div className="absolute inset-0 bg-gradient-to-b from-red-50/30 via-transparent to-[#fcfcfb]"></div>
 
@@ -40,8 +40,8 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
           Private · Simple · Takes under a minute
         </p>
 
-        {/* Below Hero Text */}
-        <div className="mt-16 max-w-md mx-auto">
+        {/* Below Hero Text - Moved down */}
+        <div className="mt-20 max-w-md mx-auto">
           <p className="text-sm text-stone-400 leading-relaxed outfit">
             You don't need big goals here.<br />
             Just write something you'd like to stay true to this year.<br />

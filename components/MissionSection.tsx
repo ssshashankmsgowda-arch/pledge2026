@@ -2,7 +2,7 @@ import React from 'react';
 
 const MissionSection: React.FC = () => {
   return (
-    <section id="mission" className="py-32 bg-white relative overflow-hidden">
+    <section id="mission" className="py-16 bg-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-10">
@@ -36,7 +36,7 @@ const MissionSection: React.FC = () => {
                 <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center text-white text-3xl">✨</div>
                 <h3 className="text-3xl font-black text-stone-900 outfit">Your Best Self</h3>
                 <p className="text-stone-500 leading-relaxed italic">
-                  "The only limit to our realization of tomorrow will be our doubts of today. Believe in your vision for 2025."
+                  "The only limit to our realization of tomorrow will be our doubts of today. Believe in your vision for 2026."
                 </p>
                 <div className="pt-4 flex items-center space-x-4">
                   <div className="w-10 h-10 rounded-full bg-stone-200"></div>
