@@ -31,15 +31,15 @@ const MissionSection: React.FC = () => {
           </div>
 
           <div className="relative">
-            <div className="aspect-square bg-stone-50 rounded-[4rem] overflow-hidden border border-stone-100 p-12 flex flex-col justify-center">
-              <div className="space-y-8">
-                <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center text-white text-3xl">✨</div>
-                <h3 className="text-3xl font-black text-stone-900 outfit">Your Best Self</h3>
-                <p className="text-stone-500 leading-relaxed italic">
+            <div className="bg-stone-50 rounded-[3rem] overflow-visible border border-stone-100 p-8 sm:p-12 flex flex-col justify-center">
+              <div className="space-y-6">
+                <div className="w-14 h-14 bg-red-600 rounded-2xl flex items-center justify-center text-white text-2xl">✨</div>
+                <h3 className="text-2xl sm:text-3xl font-black text-stone-900 outfit">Your Best Self</h3>
+                <p className="text-stone-500 leading-relaxed italic text-sm sm:text-base">
                   "The only limit to our realization of tomorrow will be our doubts of today. Believe in your vision for 2026."
                 </p>
-                <div className="pt-4 flex items-center space-x-4">
-                  <div className="w-10 h-10 rounded-full bg-stone-200"></div>
+                <div className="pt-2 flex items-center space-x-4">
+                  <div className="w-10 h-10 rounded-full bg-stone-200 flex-shrink-0"></div>
                   <div>
                     <p className="text-sm font-bold text-stone-900">Hafiz Khan</p>
                     <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Creator</p>

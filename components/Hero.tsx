@@ -7,7 +7,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onStart }) => {
   return (
-    <section className="relative min-h-[75vh] flex flex-col items-center justify-center text-center overflow-hidden bg-[#fcfcfb] pb-8">
+    <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center overflow-hidden bg-[#fcfcfb] pt-24 pb-8">
       {/* Simple clean background */}
       <div className="absolute inset-0 bg-gradient-to-b from-red-50/30 via-transparent to-[#fcfcfb]"></div>
 
