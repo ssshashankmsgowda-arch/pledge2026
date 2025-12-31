@@ -23,8 +23,8 @@ const MissionSection: React.FC = () => {
                 <p className="text-stone-400 text-sm">Making a public promise increases your chance of success by 65%.</p>
               </div>
               <div className="space-y-2">
-                <h4 className="font-black text-stone-900 outfit text-xl tracking-tight">Inspiration</h4>
-                <p className="text-stone-400 text-sm">See what others are manifesting and find your own path.</p>
+                <h4 className="font-black text-stone-900 outfit text-xl tracking-tight">Support</h4>
+                <p className="text-stone-400 text-sm">We’re here to support you and help turn your dreams into reality.</p>
               </div>
             </div>
           </div>
