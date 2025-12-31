@@ -37,7 +37,7 @@ const Poster: React.FC<PosterProps> = ({ pledge, userData, innerRef, id }) => {
     >
       {/* BACKGROUND IMAGE */}
       <img
-        src="/poster_2026_updated.png"
+        src="/poster_final2.png"
         alt="Background"
         style={{
           position: 'absolute',
