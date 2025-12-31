@@ -37,7 +37,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({ pledge, userDat
       {/* Header - Minimal padding on mobile */}
       <div className="text-center pt-4 pb-3 sm:pt-6 sm:pb-4">
         <h2 className="text-xl sm:text-2xl font-black text-stone-900 outfit tracking-tight">Your 2026 Resolution</h2>
-        <p className="text-emerald-600 font-medium text-sm">Confirm your details before generating.</p>
+        <p className="text-red-600 font-medium text-sm">Confirm your details before generating.</p>
       </div>
 
       {/* Poster Container - Takes up available space */}
@@ -69,7 +69,7 @@ const CertificatePreview: React.FC<CertificatePreviewProps> = ({ pledge, userDat
       <div className="sticky bottom-0 bg-white border-t border-stone-100 p-4 sm:p-6 space-y-3 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
         <button
           onClick={onConfirm}
-          className="w-full bg-stone-900 text-white font-bold py-4 rounded-xl transition-all duration-300 hover:bg-emerald-600 shadow-lg active:scale-95 outfit text-base"
+          className="w-full bg-stone-900 text-white font-bold py-4 rounded-xl transition-all duration-300 hover:bg-red-600 shadow-lg active:scale-95 outfit text-base"
         >
           Confirm & Finalize
         </button>

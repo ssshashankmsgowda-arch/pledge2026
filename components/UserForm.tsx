@@ -127,7 +127,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
             {!showCamera ? (
               <div className="flex flex-col items-center space-y-4">
                 <div
-                  className="group relative w-32 h-32 rounded-full bg-stone-50 border-2 border-dashed border-stone-200 hover:border-emerald-500 cursor-pointer flex items-center justify-center transition-all overflow-hidden shadow-inner"
+                  className="group relative w-32 h-32 rounded-full bg-stone-50 border-2 border-dashed border-stone-200 hover:border-red-500 cursor-pointer flex items-center justify-center transition-all overflow-hidden shadow-inner"
                 >
                   {userData.photo ? (
                     <img src={userData.photo} alt="Identity Portrait" className="w-full h-full object-cover" />
@@ -147,17 +147,17 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
                 </div>
 
                 <div className="flex space-x-4">
-                  <button onClick={() => fileInputRef.current?.click()} className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border border-emerald-100 px-4 py-1.5 rounded-full hover:bg-emerald-50 transition-colors">Upload Photo</button>
+                  <button onClick={() => fileInputRef.current?.click()} className="text-[10px] font-black text-red-600 uppercase tracking-widest border border-red-100 px-4 py-1.5 rounded-full hover:bg-red-50 transition-colors">Upload Photo</button>
                   <button onClick={startCamera} className="text-[10px] font-black text-stone-500 uppercase tracking-widest border border-stone-100 px-4 py-1.5 rounded-full hover:bg-stone-50 transition-colors">Open Camera</button>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col items-center space-y-4 w-full">
-                <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-emerald-500 bg-black">
+                <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-red-500 bg-black">
                   <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover transform -scale-x-100" />
                 </div>
                 <div className="flex space-x-3">
-                  <button onClick={capturePhoto} className="bg-emerald-600 text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">Capture</button>
+                  <button onClick={capturePhoto} className="bg-red-600 text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">Capture</button>
                   <button onClick={stopCamera} className="bg-stone-200 text-stone-700 px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">Cancel</button>
                 </div>
               </div>
@@ -175,7 +175,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
                 maxLength={13}
                 value={userData.fullName}
                 onChange={(e) => setUserData(prev => ({ ...prev, fullName: e.target.value }))}
-                className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium text-stone-800"
+                className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all font-medium text-stone-800"
               />
               <p className={`text-xs mt-1 text-right ${userData.fullName.length >= 12 ? 'text-orange-500' : 'text-stone-400'}`}>
                 {userData.fullName.length} / 13
@@ -190,7 +190,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
                   placeholder="alex@example.com"
                   value={userData.email}
                   onChange={(e) => setUserData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium text-stone-800"
+                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all font-medium text-stone-800"
                 />
               </div>
               <div>
@@ -200,7 +200,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
                   placeholder="+91 98765 43210"
                   value={userData.phone}
                   onChange={(e) => setUserData(prev => ({ ...prev, phone: e.target.value }))}
-                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium text-stone-800"
+                  className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all font-medium text-stone-800"
                 />
               </div>
             </div>
@@ -213,7 +213,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
                 maxLength={120}
                 value={userData.customPledge || ''}
                 onChange={(e) => setUserData(prev => ({ ...prev, customPledge: e.target.value }))}
-                className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium text-stone-800 min-h-[100px] resize-none"
+                className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all font-medium text-stone-800 min-h-[100px] resize-none"
               />
               <p className={`text-xs mt-1 text-right ${(userData.customPledge || '').length >= 110 ? 'text-orange-500' : 'text-stone-400'}`}>
                 {(userData.customPledge || '').length} / 120
@@ -233,7 +233,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
               disabled={!isFormValid}
               onClick={onContinue}
               className={`px-8 py-3 rounded-xl font-bold transition-all shadow-lg transform active:scale-95 ${isFormValid
-                ? 'bg-stone-900 text-white hover:bg-emerald-600 shadow-stone-200'
+                ? 'bg-stone-900 text-white hover:bg-red-600 shadow-stone-200'
                 : 'bg-stone-200 text-stone-400 cursor-not-allowed shadow-none'
                 }`}
             >

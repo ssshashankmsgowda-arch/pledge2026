@@ -51,9 +51,9 @@ const Hero: React.FC<HeroProps> = ({ onStart, slides }) => {
 
       {/* Content Layer */}
       <div className="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center">
-        <div className="mb-8 inline-flex items-center space-x-3 px-4 py-1.5 bg-white/80 border border-emerald-100 rounded-full shadow-sm backdrop-blur-sm">
-          <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-          <span className="text-[10px] font-black text-emerald-800 uppercase tracking-[0.4em] outfit">Pathway 2025</span>
+        <div className="mb-8 inline-flex items-center space-x-3 px-4 py-1.5 bg-white/80 border border-red-100 rounded-full shadow-sm backdrop-blur-sm">
+          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+          <span className="text-[10px] font-black text-red-800 uppercase tracking-[0.4em] outfit">Pathway 2025</span>
         </div>
 
         {/* Text Area - Cross-fading instead of sliding to avoid mobile overflow issues */}
@@ -69,7 +69,7 @@ const Hero: React.FC<HeroProps> = ({ onStart, slides }) => {
             >
               <h1 className="text-4xl sm:text-6xl md:text-8xl font-black text-stone-900 tracking-tighter leading-[0.95] outfit">
                 {slide.title1}<br />
-                <span className="text-emerald-600 italic">{slide.title2}</span>
+                <span className="text-red-600 italic">{slide.title2}</span>
               </h1>
               <p className="text-sm sm:text-lg text-stone-600 max-w-lg mx-auto mt-6 leading-relaxed font-light">
                 {slide.subtitle}
@@ -81,7 +81,7 @@ const Hero: React.FC<HeroProps> = ({ onStart, slides }) => {
         <div className="mt-12">
           <button
             onClick={onStart}
-            className="group relative inline-flex items-center justify-center bg-stone-900 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-300 hover:bg-emerald-600 hover:scale-105 active:scale-95 shadow-xl shadow-stone-200 outfit text-lg"
+            className="group relative inline-flex items-center justify-center bg-stone-900 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-300 hover:bg-red-600 hover:scale-105 active:scale-95 shadow-xl shadow-stone-200 outfit text-lg"
           >
             Choose Your Path
           </button>
@@ -97,7 +97,7 @@ const Hero: React.FC<HeroProps> = ({ onStart, slides }) => {
               style={{ width: index === currentIndex ? '32px' : '8px' }}
             >
               {index === currentIndex && (
-                <div className="h-full bg-emerald-600 animate-[progress_5s_linear_infinite] origin-left" />
+                <div className="h-full bg-red-600 animate-[progress_5s_linear_infinite] origin-left" />
               )}
             </button>
           ))}

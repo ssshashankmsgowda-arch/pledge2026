@@ -7,9 +7,9 @@ const MissionSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-10">
             <div className="space-y-4">
-              <span className="text-emerald-600 font-black text-[10px] uppercase tracking-[0.5em] outfit">Our Philosophy</span>
+              <span className="text-red-600 font-black text-[10px] uppercase tracking-[0.5em] outfit">Our Philosophy</span>
               <h2 className="text-5xl md:text-7xl font-black text-stone-900 outfit tracking-tighter leading-none">
-                Design Your <span className="italic text-emerald-600">Destiny.</span>
+                Design Your <span className="italic text-red-600">Destiny.</span>
               </h2>
             </div>
 
@@ -33,7 +33,7 @@ const MissionSection: React.FC = () => {
           <div className="relative">
             <div className="aspect-square bg-stone-50 rounded-[4rem] overflow-hidden border border-stone-100 p-12 flex flex-col justify-center">
               <div className="space-y-8">
-                <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl">✨</div>
+                <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center text-white text-3xl">✨</div>
                 <h3 className="text-3xl font-black text-stone-900 outfit">Your Best Self</h3>
                 <p className="text-stone-500 leading-relaxed italic">
                   "The only limit to our realization of tomorrow will be our doubts of today. Believe in your vision for 2025."
@@ -48,7 +48,7 @@ const MissionSection: React.FC = () => {
               </div>
             </div>
             {/* Decorative circles */}
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-50 rounded-full -z-10 blur-3xl"></div>
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-red-50 rounded-full -z-10 blur-3xl"></div>
             <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-stone-100 rounded-full -z-10 blur-3xl"></div>
           </div>
         </div>

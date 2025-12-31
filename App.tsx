@@ -120,7 +120,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfcfb] selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="min-h-screen bg-[#fcfcfb] selection:bg-red-100 selection:text-red-900">
       <Header onCtaClick={() => startFlow()} isPledging={inFlow} onExit={exitFlow} />
 
       {/* Hidden container for rendering the poster to canvas - ALWAYS RENDERED */}

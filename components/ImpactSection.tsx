@@ -21,7 +21,7 @@ const ImpactSection: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-24 space-y-4">
-          <span className="text-emerald-600 font-black text-[10px] uppercase tracking-[0.5em] outfit">Why It Works</span>
+          <span className="text-red-600 font-black text-[10px] uppercase tracking-[0.5em] outfit">Why It Works</span>
           <h2 className="text-5xl sm:text-7xl font-black text-stone-900 outfit tracking-tighter leading-none">Power of Intention</h2>
         </div>
 
@@ -29,10 +29,10 @@ const ImpactSection: React.FC = () => {
           {stats.map((stat, idx) => (
             <div key={idx} className="flex flex-col items-center text-center space-y-6 group">
               <div className="space-y-2">
-                <p className="text-6xl sm:text-7xl font-black text-stone-900 outfit tracking-tighter transition-transform duration-500 group-hover:scale-110 group-hover:text-emerald-600">
+                <p className="text-6xl sm:text-7xl font-black text-stone-900 outfit tracking-tighter transition-transform duration-500 group-hover:scale-110 group-hover:text-red-600">
                   {stat.value}
                 </p>
-                <div className="h-1 w-12 bg-emerald-100 mx-auto rounded-full group-hover:w-24 group-hover:bg-emerald-500 transition-all duration-500"></div>
+                <div className="h-1 w-12 bg-red-100 mx-auto rounded-full group-hover:w-24 group-hover:bg-red-500 transition-all duration-500"></div>
               </div>
               <div className="space-y-1">
                 <h3 className="text-[11px] font-black text-stone-800 uppercase tracking-[0.4em] outfit">{stat.label}</h3>
