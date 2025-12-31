@@ -95,10 +95,13 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
 
     const file = await generatePosterImage();
     if (file) {
-      const blobUrl = URL.createObjectURL(file);
+      // Force octet-stream to prevent iOS from opening in preview
+      const blob = new Blob([file], { type: 'application/octet-stream' });
+      const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.download = file.name;
       link.href = blobUrl;
+      link.style.display = 'none'; // Ensure it's hidden
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
