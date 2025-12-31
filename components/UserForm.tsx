@@ -1,5 +1,7 @@
-import React, { useRef, useState } from 'react';
-import { UserData, Pledge } from '../types';
+
+import React, { useRef, useState, useEffect } from 'react';
+import { UserData } from '../types';
+import SimpleImageCropper from './SimpleImageCropper';
 
 interface UserFormProps {
   userData: UserData;
@@ -14,9 +16,10 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [showCamera, setShowCamera] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [croppingImage, setCroppingImage] = useState<string | null>(null);
 
-  // Fix: Use useEffect to attach stream when video element becomes available
-  React.useEffect(() => {
+  // Use useEffect to attach stream when video element becomes available
+  useEffect(() => {
     if (showCamera && stream && videoRef.current) {
       videoRef.current.srcObject = stream;
     }
@@ -27,9 +30,11 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setUserData(prev => ({ ...prev, photo: reader.result as string }));
+        setCroppingImage(reader.result as string);
       };
       reader.readAsDataURL(file);
+      // Reset input needed so same file can be selected again if needed
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -38,7 +43,6 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
       setStream(s);
       setShowCamera(true);
-      // Stream attachment is now handled by useEffect
     } catch (err) {
       alert("Could not access camera. Please check permissions.");
     }
@@ -52,12 +56,18 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
       if (context && video.readyState === video.HAVE_ENOUGH_DATA) {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
+
+        // Horizontal flip for mirror effect
+        context.translate(canvas.width, 0);
+        context.scale(-1, 1);
+
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
         const dataUrl = canvas.toDataURL('image/png');
-        setUserData(prev => ({ ...prev, photo: dataUrl }));
+        setCroppingImage(dataUrl);
         stopCamera();
       } else {
-        // Retry or alert if video not ready
+        // Retry if video not ready
         setTimeout(() => {
           if (videoRef.current && canvasRef.current) {
             const v = videoRef.current;
@@ -66,8 +76,12 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
             if (ctx) {
               c.width = v.videoWidth;
               c.height = v.videoHeight;
+
+              ctx.translate(c.width, 0);
+              ctx.scale(-1, 1);
+
               ctx.drawImage(v, 0, 0, c.width, c.height);
-              setUserData(prev => ({ ...prev, photo: c.toDataURL('image/png') }));
+              setCroppingImage(c.toDataURL('image/png'));
               stopCamera();
             }
           }
@@ -84,18 +98,6 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
     setShowCamera(false);
   };
 
-  const handleClearAll = () => {
-    setUserData({
-      fullName: '',
-      email: '',
-      phone: '',
-      photo: ''
-    });
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
   const validateEmail = (email: string) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   const validatePhone = (phone: string) => phone.replace(/[^0-9]/g, '').length >= 10;
 
@@ -105,8 +107,23 @@ const UserForm: React.FC<UserFormProps> = ({ userData, setUserData, onBack, onCo
     validatePhone(userData.phone) &&
     (userData.customPledge?.trim().length ?? 0) > 5;
 
+  const handleCropComplete = (croppedImage: string) => {
+    setUserData(prev => ({ ...prev, photo: croppedImage }));
+    setCroppingImage(null);
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto px-6 py-8 relative animate-fade-in">
+
+      {/* CROPPER MODAL - Shows when user selects an image */}
+      {croppingImage && (
+        <SimpleImageCropper
+          imageSrc={croppingImage}
+          onCropComplete={handleCropComplete}
+          onCancel={() => setCroppingImage(null)}
+        />
+      )}
+
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-[0.02] pointer-events-none -z-10 outfit text-[20rem] font-black text-center flex flex-col justify-center select-none">
         <span>2025</span>
       </div>
