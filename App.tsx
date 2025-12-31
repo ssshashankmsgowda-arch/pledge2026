@@ -7,7 +7,7 @@ import UserForm from './components/UserForm';
 import CertificatePreview from './components/CertificatePreview';
 import Success from './components/Success';
 import Poster from './components/Poster';
-import SiteFooter from './components/Footer';
+
 import MissionSection from './components/MissionSection';
 
 const App: React.FC = () => {
@@ -148,7 +148,7 @@ const App: React.FC = () => {
           <div className="space-y-4 pb-20 bg-stone-50/30">
             {/* Removed CategoryHeroes */}
           </div>
-          <SiteFooter />
+
         </div>
       ) : (
         <div className="pt-24 min-h-screen bg-[#fcfcfb] flex items-start justify-center">
