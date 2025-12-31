@@ -14,8 +14,7 @@ const MissionSection: React.FC = () => {
             </div>
 
             <p className="text-stone-500 text-lg md:text-xl font-light leading-relaxed max-w-xl">
-              Success isn't accidental; it's declared. By writing down your affirmations and resolutions for 2025, you are planting the seeds of your future reality.
-              We provide the canvas for you to announce your journey to the world.
+              Success isn't accidental; it's declared. By writing down your affirmations and resolutions for 2026, you are planting the seeds of your future reality. We provide the canvas for you to announce your journey to the world.
             </p>
 
             <div className="grid grid-cols-2 gap-8 pt-4">
