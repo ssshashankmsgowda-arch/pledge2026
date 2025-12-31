@@ -22,7 +22,7 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
 
         {/* Sub-headline */}
         <p className="text-base sm:text-lg text-stone-500 max-w-xl mx-auto mt-6 leading-relaxed outfit">
-          Share your resolution and get a personalised poster
+          Share your resolution. Get personalised poster
         </p>
 
         {/* CTA Button */}
