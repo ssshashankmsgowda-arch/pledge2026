@@ -12,9 +12,11 @@ import Poster from './components/Poster';
 import MissionSection from './components/MissionSection';
 import SocialSection from './components/SocialSection';
 import Footer from './components/Footer';
+import PrivacyPolicy from './components/PrivacyPolicy';
 
 const App: React.FC = () => {
   const [inFlow, setInFlow] = useState(false);
+  const [view, setView] = useState<'home' | 'privacy'>('home');
   const [currentStep, setCurrentStep] = useState<Step>(Step.Form);
   const [userData, setUserData] = useState<UserData>({
     fullName: '',
@@ -25,12 +27,15 @@ const App: React.FC = () => {
 
   const startFlow = () => {
     setInFlow(true);
+    // Ensure we are in home view logic-wise for header states if needed, 
+    // but inFlow takes precedence for header styling.
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setCurrentStep(Step.Form);
   };
 
   const exitFlow = () => {
     setInFlow(false);
+    setView('home');
     setCurrentStep(Step.Form);
   };
 
@@ -89,6 +94,12 @@ const App: React.FC = () => {
     }
   };
 
+  // 1. Privacy View Overlay
+  if (view === 'privacy') {
+    return <PrivacyPolicy onBack={() => setView('home')} />;
+  }
+
+  // 2. Main App Structure
   return (
     <div className="min-h-screen bg-[#fcfcfb] selection:bg-red-100 selection:text-red-900">
       <Header onCtaClick={() => startFlow()} isPledging={inFlow} onExit={exitFlow} />
@@ -107,7 +118,10 @@ const App: React.FC = () => {
           <Hero onStart={() => startFlow()} />
           <MissionSection />
           <SocialSection />
-          <Footer />
+          <Footer onPrivacyClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setView('privacy');
+          }} />
         </div>
       ) : (
         <div className="pt-24 min-h-screen bg-[#fcfcfb] flex items-start justify-center">
