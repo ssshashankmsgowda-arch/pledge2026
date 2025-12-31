@@ -41,7 +41,7 @@ const MissionSection: React.FC = () => {
                   <div className="w-10 h-10 rounded-full bg-stone-200 flex-shrink-0"></div>
                   <div>
                     <p className="text-sm font-bold text-stone-900">Hafiz Khan</p>
-                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Creator</p>
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Urban Forest Creator</p>
                   </div>
                 </div>
               </div>
