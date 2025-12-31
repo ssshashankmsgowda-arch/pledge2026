@@ -37,7 +37,7 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
 
         {/* Micro text below CTA */}
         <p className="mt-4 text-xs text-stone-400 tracking-wide outfit">
-          Private · Simple · Takes under a minute
+          Simple · Takes under a minute
         </p>
 
         {/* Below Hero Text - Moved down */}
