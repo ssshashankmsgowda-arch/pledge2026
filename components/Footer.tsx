@@ -36,7 +36,9 @@ const Footer: React.FC<FooterProps> = ({ onPrivacyClick }) => {
               </li>
               <li>
                 <a
-                  href="tel:+919940142349"
+                  href="https://wa.me/919940142349"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-red-600 transition-colors"
                 >
                   Contact Us
