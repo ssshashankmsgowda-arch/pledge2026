@@ -38,7 +38,7 @@ const MissionSection: React.FC = () => {
                   "The only limit to our realization of tomorrow will be our doubts of today. Believe in your vision for 2026."
                 </p>
                 <div className="pt-2 flex items-center space-x-4">
-                  <img src="/hafiz_headshot.png" alt="Hafiz Khan" className="w-12 h-12 rounded-full object-cover flex-shrink-0 border border-stone-200 shadow-sm" />
+                  <img src="/hafiz_real.png" alt="Hafiz Khan" className="w-12 h-12 rounded-full object-cover flex-shrink-0 border border-stone-200 shadow-sm" />
                   <div>
                     <p className="text-sm font-bold text-stone-900">Hafiz Khan</p>
                     <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Urban Forest Creator</p>
