@@ -91,8 +91,8 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
     let mounted = true;
 
     const prepareFile = async () => {
-      // Wait a bit for initial render and fonts
-      await new Promise(r => setTimeout(r, 800));
+      // Reduced Wait Time: 400ms (was 800ms) to unlock faster
+      await new Promise(r => setTimeout(r, 400));
       if (!mounted) return;
 
       const file = await generatePosterImage();
@@ -109,7 +109,8 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
 
   // Download the poster
   const handleDownload = async () => {
-    setDownloading(true);
+    // Only show loader if needed
+    if (!preGeneratedFile) setDownloading(true);
 
     const file = preGeneratedFile || await generatePosterImage();
 
@@ -134,7 +135,11 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
 
   // SINGLE SHARE BUTTON - Uses native Web Share API
   const handleShare = async () => {
-    setDownloading(true);
+    // ONLY show loading spinner if we fall back to generating on the fly
+    // If preReferenceFile exists, we skip this to make it feel INSTANT.
+    if (!preGeneratedFile) {
+      setDownloading(true);
+    }
 
     const shareCaption = `🎯 My 2026 Resolution is set!\n\nCreate yours at ${currentUrl}`;
 
@@ -168,7 +173,6 @@ const Success: React.FC<SuccessProps> = ({ onReset, userData }) => {
     } catch (err: any) {
       if (err.name !== 'AbortError') {
         console.log("Share failed:", err);
-        // Silent fail or optional alert
       }
     } finally {
       setDownloading(false);
