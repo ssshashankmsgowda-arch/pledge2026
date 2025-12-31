@@ -20,38 +20,7 @@ const App: React.FC = () => {
     photo: ''
   });
 
-  const heroSlides = useMemo(() => [
-    {
-      image: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80&w=2000",
-      title1: "Dream It.",
-      title2: "Claim It.",
-      subtitle: "The most powerful year of your life starts with a single, clear intention."
-    },
-    {
-      image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80&w=2000",
-      title1: "Manifest.",
-      title2: "Achieve.",
-      subtitle: "Turn your deepest desires into reality by speaking them into existence."
-    },
-    {
-      image: "https://images.unsplash.com/photo-1544367563-12123d8965cd?auto=format&fit=crop&q=80&w=2000",
-      title1: "Inner Peace.",
-      title2: "Mental Clarity.",
-      subtitle: "Affirm your worth and find the balance your mind and soul deserve."
-    },
-    {
-      image: "https://images.unsplash.com/photo-1499750310159-5bcf844a95e6?auto=format&fit=crop&q=80&w=2000",
-      title1: "Write Your",
-      title2: "Future.",
-      subtitle: "Your words shape your world. Define your 2025 story today."
-    },
-    {
-      image: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&q=80&w=2000",
-      title1: "Believe in",
-      title2: "Yourself.",
-      subtitle: "Join thousands of others committing to a year of growth and positivity."
-    }
-  ], []);
+
 
   const startFlow = () => {
     setInFlow(true);
@@ -134,7 +103,7 @@ const App: React.FC = () => {
 
       {!inFlow ? (
         <div className="animate-fade-in">
-          <Hero onStart={() => startFlow()} slides={heroSlides} />
+          <Hero onStart={() => startFlow()} />
 
           <div className="py-12 bg-white border-b border-stone-50">
             {/* Removed FeaturedPledges */}
