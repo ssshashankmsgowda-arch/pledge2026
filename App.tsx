@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Step, Pledge, UserData } from './types';
 import Header from './components/Header';
@@ -9,6 +10,8 @@ import Success from './components/Success';
 import Poster from './components/Poster';
 
 import MissionSection from './components/MissionSection';
+import SocialSection from './components/SocialSection';
+import Footer from './components/Footer';
 
 const App: React.FC = () => {
   const [inFlow, setInFlow] = useState(false);
@@ -19,8 +22,6 @@ const App: React.FC = () => {
     phone: '',
     photo: ''
   });
-
-
 
   const startFlow = () => {
     setInFlow(true);
@@ -105,6 +106,8 @@ const App: React.FC = () => {
         <div className="animate-fade-in">
           <Hero onStart={() => startFlow()} />
           <MissionSection />
+          <SocialSection />
+          <Footer />
         </div>
       ) : (
         <div className="pt-24 min-h-screen bg-[#fcfcfb] flex items-start justify-center">
